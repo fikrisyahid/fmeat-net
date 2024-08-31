@@ -13,7 +13,7 @@ import config
 
 # Initialize the model
 model = models.CNNModel() if config.MODEL_USED == "CNN" else models.VGGModel()
-image_X_Y_size_based_on_model = (
+image_size_based_on_model = (
     224 if config.MODEL_USED == "VGG" else config.IMAGE_X_Y_SIZE
 )
 
@@ -28,14 +28,14 @@ model.to(device)
 if config.SUMMARY_DISPLAYED:
     summary(
         model,
-        input_size=(3, image_X_Y_size_based_on_model, image_X_Y_size_based_on_model),
+        input_size=(3, image_size_based_on_model, image_size_based_on_model),
     )
 
 # Define transformations for the training and validation sets
 transform = v2.Compose(
     [
         v2.ToImage(),
-        v2.Resize((image_X_Y_size_based_on_model, image_X_Y_size_based_on_model)),
+        v2.Resize((image_size_based_on_model, image_size_based_on_model)),
         v2.RandomHorizontalFlip(),
         v2.RandomVerticalFlip(),
         v2.RandomRotation(10),
