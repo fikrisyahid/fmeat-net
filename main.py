@@ -67,6 +67,9 @@ for epoch in tqdm(range(config.EPOCH_AMOUNT), desc="Epochs"):
     for inputs, labels in tqdm(train_loader, desc="Training"):
         inputs, labels = inputs.to(device), labels.to(device)
 
+        # Zero the parameter gradients
+        optimizer.zero_grad()
+
         inputs = inputs.to(config.FC_DTYPE)
         with torch.autocast(device_type="cuda", dtype=config.CONV_DTYPE):
             outputs = model(inputs)
@@ -74,7 +77,6 @@ for epoch in tqdm(range(config.EPOCH_AMOUNT), desc="Epochs"):
 
         # Backward pass and optimization
         loss.backward()
-        optimizer.zero_grad()
         optimizer.step()
 
         running_loss += loss.item()
