@@ -45,18 +45,32 @@ class CNNModel(nn.Module):
 
         # Sixth layer
         self.conv6 = nn.Conv2d(
-            in_channels=256, out_channels=256, kernel_size=3, padding=1
+            in_channels=256, out_channels=512, kernel_size=3, padding=1
         )
-        self.bn6 = nn.BatchNorm2d(256)
+        self.bn6 = nn.BatchNorm2d(512)
         self.relu6 = nn.ReLU()
+
+        # Seventh layer
+        self.conv7 = nn.Conv2d(
+            in_channels=512, out_channels=512, kernel_size=3, padding=1
+        )
+        self.bn7 = nn.BatchNorm2d(512)
+        self.relu7 = nn.ReLU()
+
+        # Eight layer
+        self.conv8 = nn.Conv2d(
+            in_channels=512, out_channels=512, kernel_size=3, padding=1
+        )
+        self.bn8 = nn.BatchNorm2d(512)
+        self.relu8 = nn.ReLU()
 
         # Flatten layer
         self.flatten = nn.Flatten()
 
         # Fully connected layers
-        self.fc1 = nn.Linear(256 * config.LAST_CONV_LAYER_IMAGE_SIZE, 512)
-        self.fc2 = nn.Linear(512, 256)
-        self.fc3 = nn.Linear(256, config.CLASS_AMOUNT)  # Output 3 classes
+        self.fc1 = nn.Linear(512 * config.LAST_CONV_LAYER_IMAGE_SIZE, 1024)
+        self.fc2 = nn.Linear(1024, 512)
+        self.fc3 = nn.Linear(512, config.CLASS_AMOUNT)
 
         self.dropout = nn.Dropout(config.DROPOUT_RATE)
 
@@ -77,7 +91,12 @@ class CNNModel(nn.Module):
         helper.print_current_memory_usage("conv4-5")
 
         x = self.relu6(self.bn6(self.conv6(x)))
-        helper.print_current_memory_usage("conv5-6")
+        x = self.relu7(self.bn7(self.conv7(x)))
+        x = F.max_pool2d(x, 2)
+        helper.print_current_memory_usage("conv6-7")
+
+        x = self.relu8(self.bn8(self.conv8(x)))
+        helper.print_current_memory_usage("conv8")
 
         return x
 
