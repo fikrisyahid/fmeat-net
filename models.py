@@ -63,33 +63,26 @@ class CNNModel(nn.Module):
         self.fc2 = nn.Linear(512, 256)
         self.fc3 = nn.Linear(256, config.CLASS_AMOUNT)  # Output 3 classes
 
-        self.dropout = nn.Dropout(0.8)
+        self.dropout = nn.Dropout(config.DROPOUT_RATE)
 
     def forward_conv(self, x):
         helper.print_current_memory_usage("conv1", before=True)
         x = self.relu1(self.bn1(self.conv1(x)))
-        helper.print_current_memory_usage("conv1")
-
         x = self.relu2(self.bn2(self.conv2(x)))
-        helper.print_current_memory_usage("conv2")
         x = F.max_pool2d(x, 2)
+        helper.print_current_memory_usage("conv1-2")
 
         x = self.relu3(self.bn3(self.conv3(x)))
-        helper.print_current_memory_usage("conv3")
-
         x = self.relu4(self.bn4(self.conv4(x)))
-        helper.print_current_memory_usage("conv4")
         x = F.max_pool2d(x, 2)
+        helper.print_current_memory_usage("conv3-4")
 
         x = self.relu5(self.bn5(self.conv5(x)))
-        helper.print_current_memory_usage("conv5")
-
         x = self.relu6(self.bn6(self.conv6(x)))
-        helper.print_current_memory_usage("conv6")
         x = F.max_pool2d(x, 2)
+        helper.print_current_memory_usage("conv5-6")
 
         x = self.relu7(self.bn7(self.conv7(x)))
-        helper.print_current_memory_usage("conv7")
 
         return x
 

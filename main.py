@@ -57,7 +57,7 @@ val_loader = DataLoader(val_dataset, batch_size=config.BATCH_SIZE, shuffle=False
 
 # Define loss function and optimizer
 criterion = nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
+optimizer = torch.optim.Adam(model.parameters(), lr=config.LEARNING_RATE)
 
 # Training loop
 for epoch in tqdm(range(config.EPOCH_AMOUNT), desc="Epochs"):
