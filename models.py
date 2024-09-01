@@ -63,7 +63,7 @@ class CNNModel(nn.Module):
         self.fc2 = nn.Linear(512, 256)
         self.fc3 = nn.Linear(256, config.CLASS_AMOUNT)  # Output 3 classes
 
-        self.dropout = nn.Dropout(0.5)
+        self.dropout = nn.Dropout(0.8)
 
     def forward_conv(self, x):
         helper.print_current_memory_usage("conv1", before=True)
