@@ -13,9 +13,7 @@ import config
 
 # Initialize the model
 model = models.CNNModel() if config.MODEL_USED == "CNN" else models.VGGModel()
-image_size_based_on_model = (
-    224 if config.MODEL_USED == "VGG" else config.IMAGE_X_Y_SIZE
-)
+image_size_based_on_model = 224 if config.MODEL_USED == "VGG" else config.IMAGE_X_Y_SIZE
 
 # Set the model to the desired dtype (all layers)
 model.to(config.FC_DTYPE)
@@ -51,6 +49,11 @@ train_dataset = datasets.ImageFolder(
 val_dataset = datasets.ImageFolder(
     os.path.join(config.DATASET_DIR, "validation"), transform=transform
 )
+# Load the testing dataset
+test_dataset = datasets.ImageFolder(
+    os.path.join(config.DATASET_DIR, "testing"), transform=transform
+)
+test_loader = DataLoader(test_dataset, batch_size=config.BATCH_SIZE, shuffle=False)
 
 train_loader = DataLoader(train_dataset, batch_size=config.BATCH_SIZE, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=config.BATCH_SIZE, shuffle=False)
@@ -108,3 +111,24 @@ for epoch in tqdm(range(config.EPOCH_AMOUNT), desc="Epochs"):
     val_loss = val_loss / len(val_loader.dataset)
     val_accuracy = correct / total
     print(f"Validation Loss: {val_loss:.4f}, Accuracy: {val_accuracy:.4f}")
+
+# Testing phase
+model.eval()
+test_loss = 0.0
+correct = 0
+total = 0
+with torch.no_grad():
+    for inputs, labels in tqdm(test_loader, desc="Testing"):
+        inputs, labels = inputs.to(device), labels.to(device)
+        inputs = inputs.to(config.FC_DTYPE)
+        outputs = model(inputs)
+        loss = criterion(outputs, labels)
+        test_loss += loss.item() * inputs.size(0)
+
+        _, predicted = torch.max(outputs, 1)
+        total += labels.size(0)
+        correct += (predicted == labels).sum().item()
+
+test_loss = test_loss / len(test_loader.dataset)
+test_accuracy = correct / total
+print(f"Test Loss: {test_loss:.4f}, Accuracy: {test_accuracy:.4f}")
