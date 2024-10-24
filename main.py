@@ -49,14 +49,14 @@ train_dataset = datasets.ImageFolder(
 val_dataset = datasets.ImageFolder(
     os.path.join(config.DATASET_DIR, "validation"), transform=transform
 )
-# Load the testing dataset
 test_dataset = datasets.ImageFolder(
     os.path.join(config.DATASET_DIR, "testing"), transform=transform
 )
-test_loader = DataLoader(test_dataset, batch_size=config.BATCH_SIZE, shuffle=False)
 
+# Make the loader for each dataset
 train_loader = DataLoader(train_dataset, batch_size=config.BATCH_SIZE, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=config.BATCH_SIZE, shuffle=False)
+test_loader = DataLoader(test_dataset, batch_size=config.BATCH_SIZE, shuffle=False)
 
 # Define loss function and optimizer
 criterion = nn.CrossEntropyLoss()
