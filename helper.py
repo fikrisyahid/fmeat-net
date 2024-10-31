@@ -134,7 +134,7 @@ def generate_augmented_images(
                 class_dir = os.path.join(augmented_dir, class_name)
                 os.makedirs(class_dir, exist_ok=True)
                 save_path = os.path.join(
-                    class_dir, f"aug_{aug_type}_{batch_idx * batch_size + i}.jpg"
+                    class_dir, f"{class_name}_{aug_type}_{batch_idx * batch_size + i}.jpg"
                 )
                 save_image(image, save_path)
                 print(f"Saved: {save_path}")
@@ -200,7 +200,7 @@ def visualize_augmentations(image_path):
         ),
         "Color_jitter": v2.Compose(
             [
-                v2.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
+                v2.ColorJitter(brightness=0.4, contrast=0.4, saturation=0.4, hue=0.2),
                 v2.ToImage(),
                 v2.Resize((224, 224)),
                 v2.ToDtype(torch.float32, scale=True),
