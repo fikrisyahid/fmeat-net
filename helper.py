@@ -88,6 +88,14 @@ def generate_augmented_images(
                 v2.ToDtype(torch.float32, scale=True),
             ]
         ),
+        "Color_jitter": v2.Compose(
+            [
+                v2.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
+                v2.ToImage(),
+                v2.Resize((224, 224)),
+                v2.ToDtype(torch.float32, scale=True),
+            ]
+        ),
     }
 
     augmented_dir = destination_dir
@@ -177,13 +185,21 @@ def visualize_augmentations(image_path):
                 v2.ToDtype(torch.float32, scale=True),
             ]
         ),
+        "Color_jitter": v2.Compose(
+            [
+                v2.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
+                v2.ToImage(),
+                v2.Resize((224, 224)),
+                v2.ToDtype(torch.float32, scale=True),
+            ]
+        ),
     }
 
     # Load image
     image = Image.open(image_path)
 
-    # Create subplot grid
-    fig, axes = plt.subplots(2, 3, figsize=(15, 10))
+    # Create subplot grid with 2x4 layout instead of 2x3
+    _, axes = plt.subplots(2, 4, figsize=(20, 10))  # Increased figure width
     axes = axes.ravel()
 
     # Generate and display augmentations
@@ -195,6 +211,11 @@ def visualize_augmentations(image_path):
         axes[idx].imshow(aug_image.permute(1, 2, 0))
         axes[idx].set_title(name)
         axes[idx].axis("off")
+
+    # Hide the last empty subplot if we have an odd number of transforms
+    if len(augmentation_transforms) < len(axes):
+        for i in range(len(augmentation_transforms), len(axes)):
+            axes[i].axis("off")
 
     plt.tight_layout()
     plt.show()
