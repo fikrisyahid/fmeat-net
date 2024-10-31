@@ -34,11 +34,8 @@ transform = v2.Compose(
     [
         v2.ToImage(),
         v2.Resize((image_size_based_on_model, image_size_based_on_model)),
-        v2.RandomHorizontalFlip(),
-        v2.RandomVerticalFlip(),
-        v2.RandomRotation(10),
-        v2.RandomPerspective(),
         v2.ToDtype(torch.float32, scale=True),
+        v2.Normalize(mean=[0.5484, 0.3618, 0.3820], std=[0.1127, 0.1052, 0.1096]),
     ]
 )
 
@@ -75,7 +72,7 @@ for epoch in tqdm(range(config.EPOCH_AMOUNT), desc="Epochs"):
 
         inputs = inputs.to(config.FC_DTYPE)
         with torch.autocast(device_type="cuda", dtype=config.CONV_DTYPE):
-            outputs = model(inputs)
+            outputs = model(inputs, epoch)
             loss = criterion(outputs, labels)
 
         # Backward pass and optimization
@@ -110,7 +107,7 @@ for epoch in tqdm(range(config.EPOCH_AMOUNT), desc="Epochs"):
 
     val_loss = val_loss / len(val_loader.dataset)
     val_accuracy = correct / total
-    print(f"Validation Loss: {val_loss:.4f}, Accuracy: {val_accuracy:.4f}")
+    print(f"Validation Loss: {val_loss:.4f}, Accuracy: {val_accuracy:.4f}\n")
 
 # Testing phase
 model.eval()
