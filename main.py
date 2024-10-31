@@ -70,6 +70,8 @@ optimizer = torch.optim.Adam(model.parameters(), lr=config.LEARNING_RATE)
 for epoch in tqdm(range(config.EPOCH_AMOUNT), desc="Epochs"):
     model.train()
     running_loss = 0.0
+    correct_train = 0
+    total_train = 0
     start_time = time.time()
     for inputs, labels in tqdm(train_loader, desc="Training"):
         inputs, labels = inputs.to(device), labels.to(device)
@@ -88,11 +90,19 @@ for epoch in tqdm(range(config.EPOCH_AMOUNT), desc="Epochs"):
 
         running_loss += loss.item()
 
+        _, predicted = torch.max(outputs, 1)
+        total_train += labels.size(0)
+        correct_train += (predicted == labels).sum().item()
+
     end_time = time.time()
     iteration_time = end_time - start_time
+    train_accuracy = correct_train / total_train
 
     print(
-        f"Epoch {epoch + 1}/{config.EPOCH_AMOUNT}, Loss: {running_loss / len(train_loader)}, Time: {iteration_time:.2f} seconds"
+        f"Epoch {epoch + 1}/{config.EPOCH_AMOUNT}, Time: {iteration_time:.2f} seconds"
+    )
+    print(
+        f"Training Loss: {running_loss / len(train_loader)}, Training Accuracy: {train_accuracy:.4f}"
     )
 
     # Validation loop
