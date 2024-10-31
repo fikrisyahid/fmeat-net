@@ -115,7 +115,7 @@ def generate_augmented_images(
         augmented_dataset = datasets.ImageFolder(root=source_dir, transform=transform)
         batch_size = 32
         train_loader = DataLoader(
-            augmented_dataset, batch_size=batch_size, shuffle=True
+            augmented_dataset, batch_size=batch_size, shuffle=False
         )
 
         # Generate and save augmented images
