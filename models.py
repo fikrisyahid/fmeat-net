@@ -14,37 +14,51 @@ class CNNModel(nn.Module):
         self.relu1 = nn.ReLU()
 
         # Second layer
-        self.conv2 = nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1)
+        self.conv2 = nn.Conv2d(
+            in_channels=64, out_channels=64, kernel_size=3, padding=1
+        )
         self.bn2 = nn.BatchNorm2d(64)
         self.relu2 = nn.ReLU()
 
         # Third layer
-        self.conv3 = nn.Conv2d(in_channels=64, out_channels=128, kernel_size=3, padding=1)
+        self.conv3 = nn.Conv2d(
+            in_channels=64, out_channels=128, kernel_size=3, padding=1
+        )
         self.bn3 = nn.BatchNorm2d(128)
         self.relu3 = nn.ReLU()
 
         # Fourth layer
-        self.conv4 = nn.Conv2d(in_channels=128, out_channels=128, kernel_size=3, padding=1)
+        self.conv4 = nn.Conv2d(
+            in_channels=128, out_channels=128, kernel_size=3, padding=1
+        )
         self.bn4 = nn.BatchNorm2d(128)
         self.relu4 = nn.ReLU()
 
         # Fifth layer
-        self.conv5 = nn.Conv2d(in_channels=128, out_channels=256, kernel_size=3, padding=1)
+        self.conv5 = nn.Conv2d(
+            in_channels=128, out_channels=256, kernel_size=3, padding=1
+        )
         self.bn5 = nn.BatchNorm2d(256)
         self.relu5 = nn.ReLU()
 
         # Sixth layer
-        self.conv6 = nn.Conv2d(in_channels=256, out_channels=256, kernel_size=3, padding=1)
+        self.conv6 = nn.Conv2d(
+            in_channels=256, out_channels=256, kernel_size=3, padding=1
+        )
         self.bn6 = nn.BatchNorm2d(256)
         self.relu6 = nn.ReLU()
 
         # Seventh layer
-        self.conv7 = nn.Conv2d(in_channels=256, out_channels=512, kernel_size=3, padding=1)
+        self.conv7 = nn.Conv2d(
+            in_channels=256, out_channels=512, kernel_size=3, padding=1
+        )
         self.bn7 = nn.BatchNorm2d(512)
         self.relu7 = nn.ReLU()
 
         # Eight layer
-        self.conv8 = nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, padding=1)
+        self.conv8 = nn.Conv2d(
+            in_channels=512, out_channels=512, kernel_size=3, padding=1
+        )
         self.bn8 = nn.BatchNorm2d(512)
         self.relu8 = nn.ReLU()
 
@@ -112,9 +126,6 @@ class VGGModel(nn.Module):
         super(VGGModel, self).__init__()
         self.vgg16 = models.vgg16(weights=models.VGG16_Weights.IMAGENET1K_V1)
 
-        for param in self.vgg16.features.parameters():
-            param.requires_grad = False
-
         self.vgg16.classifier = nn.Sequential(
             nn.Linear(512 * 7 * 7, 4096),
             nn.ReLU(True),
@@ -125,5 +136,11 @@ class VGGModel(nn.Module):
             nn.Linear(4096, config.CLASS_AMOUNT),
         )
 
-    def forward(self, x):
+    def forward(self, x, epoch=0):
+        if epoch == 0:
+            for param in self.vgg16.features.parameters():
+                param.requires_grad = False
+        if epoch == 10:
+            for param in self.vgg16.features.parameters():
+                param.requires_grad = True
         return self.vgg16(x)
