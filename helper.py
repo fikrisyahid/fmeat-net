@@ -54,6 +54,13 @@ def generate_augmented_images(
 ):
     # Define separate transforms for each augmentation type
     augmentation_transforms = {
+        "resize": v2.Compose(
+            [
+                v2.ToImage(),
+                v2.Resize((224, 224)),
+                v2.ToDtype(torch.float32, scale=True),
+            ]
+        ),
         "flip_h": v2.Compose(
             [
                 v2.RandomHorizontalFlip(p=1.0),
