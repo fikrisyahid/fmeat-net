@@ -35,7 +35,14 @@ transform = v2.Compose(
         v2.ToImage(),
         v2.Resize((image_size_based_on_model, image_size_based_on_model)),
         v2.ToDtype(torch.float32, scale=True),
-        v2.Normalize(mean=[0.5484, 0.3618, 0.3820], std=[0.1127, 0.1052, 0.1096]),
+        v2.Normalize(
+            mean=[0.5484, 0.3619, 0.3821]
+            if config.MODEL_USED == "CNN"
+            else [0.5480, 0.3614, 0.3816],
+            std=[0.1129, 0.1049, 0.1092]
+            if config.MODEL_USED == "CNN"
+            else [0.1173, 0.1091, 0.1134],
+        ),
     ]
 )
 
