@@ -18,9 +18,15 @@ def print_current_memory_usage(layer_str, before=False):
         )
 
 
-def get_normalization_mean_std(dataset_dir="./dataset/testing"):
+def get_normalization_mean_std(dataset_dir="./dataset/augmented/training"):
     # Define a transform that only converts to tensor (not yet normalized)
-    transform = v2.Compose([v2.ToImage(), v2.Resize((112, 112), antialias=True)])
+    transform = v2.Compose(
+        [
+            v2.ToImage(),
+            v2.Resize((112, 112), antialias=True),
+            v2.ToDtype(torch.float32, scale=True),
+        ]
+    )
 
     # Load dataset
     dataset = datasets.ImageFolder(root=dataset_dir, transform=transform)
