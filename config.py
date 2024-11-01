@@ -1,11 +1,11 @@
 import torch
 
 # GENERAL CONFIGS
-MODEL_USED = "VGG"  # MODEL_USED should be either "CNN" or "VGG"
+MODEL_USED = "CNN"  # MODEL_USED should be either "CNN" or "VGG"
 
 # HYPERPARAMETER CONFIGS
-DATASET_DIR = "./dataset"
-EPOCH_AMOUNT = 1
+DATASET_DIR = "./dataset/augmented"
+EPOCH_AMOUNT = 10
 DROPOUT_RATE = 0.8
 LEARNING_RATE = 0.0001
 BATCH_SIZE = 32
