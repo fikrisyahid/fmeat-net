@@ -227,14 +227,6 @@ def visualize_augmentations(image_path):
                 v2.ToDtype(torch.float32, scale=True),
             ]
         ),
-        # "Color_jitter": v2.Compose(
-        #     [
-        #         v2.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
-        #         v2.ToImage(),
-        #         v2.Resize((224, 224)),
-        #         v2.ToDtype(torch.float32, scale=True),
-        #     ]
-        # ),
         "dark_red_tone": v2.Compose(
             [
                 v2.Lambda(lambda img: add_dark_red_tone(img)),
