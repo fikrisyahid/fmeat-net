@@ -7,6 +7,7 @@ from torchvision.utils import save_image
 import os
 import matplotlib.pyplot as plt
 from PIL import Image
+import numpy as np
 
 
 def print_current_memory_usage(layer_str, before=False):
@@ -47,6 +48,24 @@ def get_normalization_mean_std(dataset_dir="./dataset/augmented/training"):
     std /= total_images
 
     return mean, std
+
+
+def add_dark_red_tone(image):
+    image_np = np.array(image)
+    # Add to red channel
+    image_np[:, :, 2] = np.clip(image_np[:, :, 2] + 40, 0, 255)
+    # Reduce brightness for a darker effect
+    image_np = np.clip(image_np * 0.8, 0, 255)
+    return Image.fromarray(image_np.astype(np.uint8))
+
+
+# Function to add a yellow bright tone
+def add_yellow_tone(image):
+    image_np = np.array(image)
+    # Add to red and green channels to make it more yellowish
+    image_np[:, :, 0] = np.clip(image_np[:, :, 0] + 30, 0, 255)  # Red
+    image_np[:, :, 1] = np.clip(image_np[:, :, 1] + 40, 0, 255)  # Green
+    return Image.fromarray(image_np.astype(np.uint8))
 
 
 def generate_augmented_images(
@@ -101,9 +120,25 @@ def generate_augmented_images(
                 v2.ToDtype(torch.float32, scale=True),
             ]
         ),
-        "Color_jitter": v2.Compose(
+        # "Color_jitter": v2.Compose(
+        #     [
+        #         v2.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
+        #         v2.ToImage(),
+        #         v2.Resize((224, 224)),
+        #         v2.ToDtype(torch.float32, scale=True),
+        #     ]
+        # ),
+        "dark_red_tone": v2.Compose(
             [
-                v2.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
+                v2.Lambda(lambda img: add_dark_red_tone(img)),
+                v2.ToImage(),
+                v2.Resize((224, 224)),
+                v2.ToDtype(torch.float32, scale=True),
+            ]
+        ),
+        "yellow_bright_tone": v2.Compose(
+            [
+                v2.Lambda(lambda img: add_yellow_tone(img)),
                 v2.ToImage(),
                 v2.Resize((224, 224)),
                 v2.ToDtype(torch.float32, scale=True),
@@ -134,7 +169,8 @@ def generate_augmented_images(
                 class_dir = os.path.join(augmented_dir, class_name)
                 os.makedirs(class_dir, exist_ok=True)
                 save_path = os.path.join(
-                    class_dir, f"{class_name}_{aug_type}_{batch_idx * batch_size + i}.jpg"
+                    class_dir,
+                    f"{class_name}_{aug_type}_{batch_idx * batch_size + i}.jpg",
                 )
                 save_image(image, save_path)
                 print(f"Saved: {save_path}")
@@ -198,9 +234,25 @@ def visualize_augmentations(image_path):
                 v2.ToDtype(torch.float32, scale=True),
             ]
         ),
-        "Color_jitter": v2.Compose(
+        # "Color_jitter": v2.Compose(
+        #     [
+        #         v2.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
+        #         v2.ToImage(),
+        #         v2.Resize((224, 224)),
+        #         v2.ToDtype(torch.float32, scale=True),
+        #     ]
+        # ),
+        "dark_red_tone": v2.Compose(
             [
-                v2.ColorJitter(brightness=0.4, contrast=0.4, saturation=0.4, hue=0.2),
+                v2.Lambda(lambda img: add_dark_red_tone(img)),
+                v2.ToImage(),
+                v2.Resize((224, 224)),
+                v2.ToDtype(torch.float32, scale=True),
+            ]
+        ),
+        "yellow_bright_tone": v2.Compose(
+            [
+                v2.Lambda(lambda img: add_yellow_tone(img)),
                 v2.ToImage(),
                 v2.Resize((224, 224)),
                 v2.ToDtype(torch.float32, scale=True),
@@ -224,11 +276,6 @@ def visualize_augmentations(image_path):
         axes[idx].imshow(aug_image.permute(1, 2, 0))
         axes[idx].set_title(name)
         axes[idx].axis("off")
-
-    # Hide the last empty subplot if we have an odd number of transforms
-    if len(augmentation_transforms) < len(axes):
-        for i in range(len(augmentation_transforms), len(axes)):
-            axes[i].axis("off")
 
     plt.tight_layout()
     plt.show()
