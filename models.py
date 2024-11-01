@@ -114,7 +114,7 @@ class CNNModel(nn.Module):
 
         return x
 
-    def forward(self, x):
+    def forward(self, x, epoch=0):
         x = self.forward_conv(x)
         x = self.forward_fc(x)
 
@@ -140,7 +140,7 @@ class VGGModel(nn.Module):
         if epoch == 0:
             for param in self.vgg16.features.parameters():
                 param.requires_grad = False
-        if epoch == 10:
+        if epoch == 5:
             for param in self.vgg16.features.parameters():
                 param.requires_grad = True
         return self.vgg16(x)
