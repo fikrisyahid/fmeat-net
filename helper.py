@@ -52,11 +52,25 @@ def get_normalization_mean_std(dataset_dir="./dataset/augmented/training"):
 
 def add_dark_red_tone(image):
     image_np = np.array(image)
-    # Add to red channel
-    image_np[:, :, 2] = np.clip(image_np[:, :, 2] + 40, 0, 255)
-    # Reduce brightness for a darker effect
-    image_np = np.clip(image_np * 0.8, 0, 255)
-    return Image.fromarray(image_np.astype(np.uint8))
+    # Convert to float for more precise manipulation
+    image_np = image_np.astype(np.float32)
+    # Increase red channel to get a deeper reddish tone
+    image_np[:, :, 0] = np.clip(
+        image_np[:, :, 0] + 40, 0, 255
+    )  # Increase red significantly
+    # Adjust green channel moderately to balance the tone
+    image_np[:, :, 1] = np.clip(
+        image_np[:, :, 1] + 20, 0, 255
+    )  # Increase green slightly
+    # Reduce blue channel to warm up the tone
+    image_np[:, :, 2] = np.clip(
+        image_np[:, :, 2] - 15, 0, 255
+    )  # Decrease blue for warmth
+    # Darken the image overall
+    image_np = np.clip(image_np * 0.65, 0, 255)  # Reduce brightness significantly
+    # Convert back to uint8
+    image_np = image_np.astype(np.uint8)
+    return Image.fromarray(image_np)
 
 
 # Function to add a yellow bright tone
