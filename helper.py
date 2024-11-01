@@ -52,25 +52,12 @@ def get_normalization_mean_std(dataset_dir="./dataset/augmented/training"):
 
 def add_dark_red_tone(image):
     image_np = np.array(image)
-    # Convert to float for more precise manipulation
-    image_np = image_np.astype(np.float32)
-    # Increase red channel to get a deeper reddish tone
-    image_np[:, :, 0] = np.clip(
-        image_np[:, :, 0] + 40, 0, 255
-    )  # Increase red significantly
-    # Adjust green channel moderately to balance the tone
-    image_np[:, :, 1] = np.clip(
-        image_np[:, :, 1] + 20, 0, 255
-    )  # Increase green slightly
-    # Reduce blue channel to warm up the tone
-    image_np[:, :, 2] = np.clip(
-        image_np[:, :, 2] - 15, 0, 255
-    )  # Decrease blue for warmth
-    # Darken the image overall
-    image_np = np.clip(image_np * 0.65, 0, 255)  # Reduce brightness significantly
-    # Convert back to uint8
-    image_np = image_np.astype(np.uint8)
-    return Image.fromarray(image_np)
+    image_np[:, :, 0] = np.clip(image_np[:, :, 0] + 45, 0, 255)  # Red
+    image_np[:, :, 1] = np.clip(image_np[:, :, 1] + 10, 0, 255)  # Green
+    image_np[:, :, 2] = np.clip(image_np[:, :, 2] - 24, 0, 255)  # Blue
+    # Reduce brightness for a darker effect
+    image_np = np.clip(image_np * 0.5, 0, 255)
+    return Image.fromarray(image_np.astype(np.uint8))
 
 
 # Function to add a yellow bright tone
@@ -134,14 +121,6 @@ def generate_augmented_images(
                 v2.ToDtype(torch.float32, scale=True),
             ]
         ),
-        # "Color_jitter": v2.Compose(
-        #     [
-        #         v2.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
-        #         v2.ToImage(),
-        #         v2.Resize((224, 224)),
-        #         v2.ToDtype(torch.float32, scale=True),
-        #     ]
-        # ),
         "dark_red_tone": v2.Compose(
             [
                 v2.Lambda(lambda img: add_dark_red_tone(img)),
