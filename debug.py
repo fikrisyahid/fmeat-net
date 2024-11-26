@@ -1,3 +1,7 @@
+# =============================================================================
+# Basic Debugging
+# =============================================================================
+
 # import helper
 
 # helper.visualize_augmentations("./dataset/training/sapi/s7.jpg")
@@ -7,6 +11,10 @@
 # print(helper.get_normalization_mean_std("./dataset/augmented/training"))
 # print(helper.get_normalization_mean_std("./dataset/augmented/validation"))
 # print(helper.get_normalization_mean_std("./dataset/augmented/testing"))
+
+# =============================================================================
+# Argparse Example
+# =============================================================================
 
 # import argparse
 
@@ -36,6 +44,10 @@
 #     args = parser.parse_args()
 #     main(args.model_type, args.pso, args.mp_mode)
 
+
+# =============================================================================
+# Basic PSO Implementation
+# =============================================================================
 
 from pyswarms.single import GlobalBestPSO
 
@@ -88,3 +100,33 @@ print("Best Hyperparameters:")
 print("Learning Rate:", best_params[0])
 print("Batch Size:", int(best_params[1]))
 print("Dropout Rate:", best_params[2])
+
+
+# =============================================================================
+# Visualization
+# =============================================================================
+
+# # Import modules
+# from IPython.display import Image
+
+# # Import PySwarms
+# import pyswarms as ps
+# from pyswarms.utils.functions import single_obj as fx
+# from pyswarms.utils.plotters import plot_contour
+
+# from pyswarms.utils.plotters.formatters import Mesher
+
+# options = {"c1": 0.5, "c2": 0.3, "w": 0.9}
+# optimizer = ps.single.GlobalBestPSO(n_particles=50, dimensions=2, options=options)
+# cost, pos = optimizer.optimize(fx.sphere, iters=100)
+
+# # Initialize mesher with sphere function
+# m = Mesher(func=fx.sphere)
+
+
+# # Make animation
+# animation = plot_contour(pos_history=optimizer.pos_history, mesher=m, mark=(0, 0))
+
+# # Enables us to view it in a Jupyter notebook
+# animation.save("plot0.gif", writer="imagemagick", fps=10)
+# Image(url="plot0.gif")
