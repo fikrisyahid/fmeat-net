@@ -8,9 +8,7 @@ def main(model_type, pso, mp_mode):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Script untuk menjalankan model dengan konfigurasi tertentu."
-    )
+    parser = argparse.ArgumentParser(description="Script untuk menjalankan model dengan konfigurasi tertentu.")
     parser.add_argument(
         "model_type",
         type=lambda x: (str(x).lower()),

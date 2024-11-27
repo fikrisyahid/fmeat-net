@@ -14,9 +14,7 @@ from pyswarms.single import GlobalBestPSO
 
 def main(model_type, pso, mp_mode):
     # Initialize mixed precision mode
-    CONV_DTYPE, FC_DTYPE = config.MIXED_PRECISION_MODE_COLLECTION.get(
-        mp_mode, (torch.float32, torch.float32)
-    )
+    CONV_DTYPE, FC_DTYPE = config.MIXED_PRECISION_MODE_COLLECTION.get(mp_mode, (torch.float32, torch.float32))
 
     # Set summary displayed condition
     SUMMARY_DISPLAYED = mp_mode == 0 or mp_mode == 1
@@ -53,15 +51,9 @@ def main(model_type, pso, mp_mode):
     )
 
     # Load the dataset
-    train_dataset = datasets.ImageFolder(
-        os.path.join(config.DATASET_DIR, "training"), transform=transform
-    )
-    val_dataset = datasets.ImageFolder(
-        os.path.join(config.DATASET_DIR, "validation"), transform=transform
-    )
-    test_dataset = datasets.ImageFolder(
-        os.path.join(config.DATASET_DIR, "testing"), transform=transform
-    )
+    train_dataset = datasets.ImageFolder(os.path.join(config.DATASET_DIR, "training"), transform=transform)
+    val_dataset = datasets.ImageFolder(os.path.join(config.DATASET_DIR, "validation"), transform=transform)
+    test_dataset = datasets.ImageFolder(os.path.join(config.DATASET_DIR, "testing"), transform=transform)
 
     # Make the loader for each dataset
     train_loader = DataLoader(train_dataset, batch_size=config.BATCH_SIZE, shuffle=True)
@@ -72,102 +64,100 @@ def main(model_type, pso, mp_mode):
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=config.LEARNING_RATE)
 
-    if pso:
-        # Define a simple objective function
-        def train_model(x):
-            # Ambil hyperparameter dari partikel PSO
-            learning_rate = x[:, 0]  # Dimensi 0: learning rate
-            batch_size = x[:, 1]  # Dimensi 1: batch size
-            dropout_rate = x[:, 2]  # Dimensi 2: dropout rate
+    # Define training function
+    def train_model(x):
+        using_pso = x is not None
 
-            # Simulasi perhitungan "loss" dari model yang pakai hyperparameter ini
-            # Misalnya kita buat loss = (learning_rate - 0.005)^2 + (batch_size - 64)^2 + (dropout_rate - 0.2)^2
-            # Tujuannya biar nilai loss sekecil mungkin di sekitar learning rate = 0.005, batch size = 64, dropout rate = 0.2
-            loss = (learning_rate - 0.005) ** 2 + (batch_size - 64) ** 2 + (dropout_rate - 0.2) ** 2
+        # Ambil hyperparameter dari partikel PSO
+        learning_rate = x[:, 0] if using_pso else 0  # Dimensi 0: learning rate
+        batch_size = x[:, 1] if using_pso else 0  # Dimensi 1: batch size
+        dropout_rate = x[:, 2] if using_pso else 0  # Dimensi 2: dropout rate
 
-            # Training loop
-            for epoch in tqdm(range(config.EPOCH_AMOUNT), desc="Epochs"):
-                model.train()
-                running_loss = 0.0
-                correct_train = 0
-                total_train = 0
-                start_time = time.time()
-                for inputs, labels in tqdm(train_loader, desc="Training"):
-                    inputs, labels = inputs.to(device), labels.to(device)
+        # Simulasi perhitungan "loss" dari model yang pakai hyperparameter ini
+        # Misalnya kita buat loss = (learning_rate - 0.005)^2 + (batch_size - 64)^2 + (dropout_rate - 0.2)^2
+        # Tujuannya biar nilai loss sekecil mungkin di sekitar learning rate = 0.005, batch size = 64, dropout rate = 0.2
+        loss = (learning_rate - 0.005) ** 2 + (batch_size - 64) ** 2 + (dropout_rate - 0.2) ** 2
 
-                    # Zero the parameter gradients
-                    optimizer.zero_grad()
+        # Training loop
+        for epoch in tqdm(range(config.EPOCH_AMOUNT), desc="Epochs"):
+            model.train()
+            running_loss = 0.0
+            correct_train = 0
+            total_train = 0
+            start_time = time.time()
+            for inputs, labels in tqdm(train_loader, desc="Training"):
+                inputs, labels = inputs.to(device), labels.to(device)
 
-                    inputs = inputs.to(FC_DTYPE)
-                    with torch.autocast(device_type="cuda", dtype=CONV_DTYPE):
-                        outputs = model(inputs, epoch)
-                        loss = criterion(outputs, labels)
+                # Zero the parameter gradients
+                optimizer.zero_grad()
 
-                    # Backward pass and optimization
-                    loss.backward()
-                    optimizer.step()
+                inputs = inputs.to(FC_DTYPE)
+                with torch.autocast(device_type="cuda", dtype=CONV_DTYPE):
+                    outputs = model(inputs, epoch)
+                    loss = criterion(outputs, labels)
 
-                    running_loss += loss.item()
+                # Backward pass and optimization
+                loss.backward()
+                optimizer.step()
 
-                    _, predicted = torch.max(outputs, 1)
-                    total_train += labels.size(0)
-                    correct_train += (predicted == labels).sum().item()
+                running_loss += loss.item()
 
-                end_time = time.time()
-                iteration_time = end_time - start_time
-                train_accuracy = correct_train / total_train
+                _, predicted = torch.max(outputs, 1)
+                total_train += labels.size(0)
+                correct_train += (predicted == labels).sum().item()
 
-                print(
-                    f"Epoch {epoch + 1}/{config.EPOCH_AMOUNT}, Time: {iteration_time:.2f} seconds"
-                )
-                print(
-                    f"Training Loss: {running_loss / len(train_loader)}, Training Accuracy: {train_accuracy:.4f}"
-                )
+            end_time = time.time()
+            iteration_time = end_time - start_time
+            train_accuracy = correct_train / total_train
 
-                # Validation loop
-                model.eval()
-                val_loss = 0.0
-                correct = 0
-                total = 0
-                with torch.no_grad():
-                    for inputs, labels in tqdm(val_loader, desc="Validation"):
-                        inputs, labels = inputs.to(device), labels.to(device)
-                        inputs = inputs.to(FC_DTYPE)
-                        outputs = model(inputs)
-                        loss = criterion(outputs, labels)
-                        val_loss += loss.item() * inputs.size(0)
+            print(f"Epoch {epoch + 1}/{config.EPOCH_AMOUNT}, Time: {iteration_time:.2f} seconds")
+            print(f"Training Loss: {running_loss / len(train_loader)}, Training Accuracy: {train_accuracy:.4f}")
 
-                        _, predicted = torch.max(outputs, 1)
-                        total += labels.size(0)
-                        correct += (predicted == labels).sum().item()
-
-                val_loss = val_loss / len(val_loader.dataset)
-                val_accuracy = correct / total
-                print(f"Validation Loss: {val_loss:.4f}, Accuracy: {val_accuracy:.4f}\n")
-
-            # Testing phase
+            # Validation loop
             model.eval()
-            test_loss = 0.0
+            val_loss = 0.0
             correct = 0
             total = 0
             with torch.no_grad():
-                for inputs, labels in tqdm(test_loader, desc="Testing"):
+                for inputs, labels in tqdm(val_loader, desc="Validation"):
                     inputs, labels = inputs.to(device), labels.to(device)
                     inputs = inputs.to(FC_DTYPE)
                     outputs = model(inputs)
                     loss = criterion(outputs, labels)
-                    test_loss += loss.item() * inputs.size(0)
+                    val_loss += loss.item() * inputs.size(0)
 
                     _, predicted = torch.max(outputs, 1)
                     total += labels.size(0)
                     correct += (predicted == labels).sum().item()
 
-            test_loss = test_loss / len(test_loader.dataset)
-            test_accuracy = correct / total
-            print(f"Test Loss: {test_loss:.4f}, Accuracy: {test_accuracy:.4f}")
+            val_loss = val_loss / len(val_loader.dataset)
+            val_accuracy = correct / total
+            print(f"Validation Loss: {val_loss:.4f}, Accuracy: {val_accuracy:.4f}\n")
 
-            return -test_accuracy
+        # Testing phase
+        model.eval()
+        test_loss = 0.0
+        correct = 0
+        total = 0
+        with torch.no_grad():
+            for inputs, labels in tqdm(test_loader, desc="Testing"):
+                inputs, labels = inputs.to(device), labels.to(device)
+                inputs = inputs.to(FC_DTYPE)
+                outputs = model(inputs)
+                loss = criterion(outputs, labels)
+                test_loss += loss.item() * inputs.size(0)
 
+                _, predicted = torch.max(outputs, 1)
+                total += labels.size(0)
+                correct += (predicted == labels).sum().item()
+
+        test_loss = test_loss / len(test_loader.dataset)
+        test_accuracy = correct / total
+        print(f"Test Loss: {test_loss:.4f}, Accuracy: {test_accuracy:.4f}")
+
+        return -test_accuracy
+
+    if pso:
         # Set bounds untuk tiap hyperparameter
         bounds = (
             [
@@ -201,3 +191,5 @@ def main(model_type, pso, mp_mode):
         print("Learning Rate:", best_params[0])
         print("Batch Size:", int(best_params[1]))
         print("Dropout Rate:", best_params[2])
+    else:
+        train_model(None)
