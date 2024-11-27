@@ -54,38 +54,38 @@ from pyswarms.single import GlobalBestPSO
 
 # Define a simple objective function
 def objective_func(x):
-  # Ambil hyperparameter dari partikel PSO
-  learning_rate = x[:, 0]  # Dimensi 0: learning rate
-  batch_size = x[:, 1]  # Dimensi 1: batch size
-  dropout_rate = x[:, 2]  # Dimensi 2: dropout rate
+    # Ambil hyperparameter dari partikel PSO
+    learning_rate = x[:, 0]  # Dimensi 0: learning rate
+    batch_size = x[:, 1]  # Dimensi 1: batch size
+    dropout_rate = x[:, 2]  # Dimensi 2: dropout rate
 
-  # Simulasi perhitungan "loss" dari model yang pakai hyperparameter ini
-  # Misalnya kita buat loss = (learning_rate - 0.005)^2 + (batch_size - 64)^2 + (dropout_rate - 0.2)^2
-  # Tujuannya biar nilai loss sekecil mungkin di sekitar learning rate = 0.005, batch size = 64, dropout rate = 0.2
-  loss = (learning_rate - 0.005) ** 2 + (batch_size - 64) ** 2 + (dropout_rate - 0.2) ** 2
+    # Simulasi perhitungan "loss" dari model yang pakai hyperparameter ini
+    # Misalnya kita buat loss = (learning_rate - 0.005)^2 + (batch_size - 64)^2 + (dropout_rate - 0.2)^2
+    # Tujuannya biar nilai loss sekecil mungkin di sekitar learning rate = 0.005, batch size = 64, dropout rate = 0.2
+    loss = (learning_rate - 0.005) ** 2 + (batch_size - 64) ** 2 + (dropout_rate - 0.2) ** 2
 
-  return loss
+    return loss
 
 
 # Set bounds untuk tiap hyperparameter
 bounds = (
-  [
-    0.001,  # Lower bound untuk learning rate
-    16,  # Lower bound untuk batch size
-    0.1,  # Lower bound untuk dropout rate
-  ],
-  [
-    0.01,  # Upper bound untuk learning rate
-    128,  # Upper bound untuk batch size
-    0.5,  # Upper bound untuk dropout rate
-  ],
+    [
+        0.001,  # Lower bound untuk learning rate
+        16,  # Lower bound untuk batch size
+        0.1,  # Lower bound untuk dropout rate
+    ],
+    [
+        0.01,  # Upper bound untuk learning rate
+        128,  # Upper bound untuk batch size
+        0.5,  # Upper bound untuk dropout rate
+    ],
 )
 
 # Set options untuk PSO
 options = {
-  "c1": 1.5,  # Cognitive parameter
-  "c2": 2.0,  # Social parameter
-  "w": 0.5,  # Inertia weight
+    "c1": 1.5,  # Cognitive parameter
+    "c2": 2.0,  # Social parameter
+    "w": 0.5,  # Inertia weight
 }
 
 # Inisialisasi PSO optimizer
