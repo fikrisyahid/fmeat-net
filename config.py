@@ -14,6 +14,8 @@ DROPOUT_RATE = 0.8
 LEARNING_RATE = 0.0001
 BATCH_SIZE = 32
 CLASS_AMOUNT = 3
+FINE_TUNE_UNFREEZE_LAYER = 0
+KERNEL_SIZE = 3
 
 # =============================================================================
 # CNN conv layer settings
