@@ -31,13 +31,11 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    print(f"Model type: {args.model_type}, type: {type(args.model_type)}")
-    print(
-        f"Learning Rate: {args.learning_rate}, type: {type(args.learning_rate)}"
-    )
-    print(f"Dropout Rate: {args.dropout_rate}, type: {type(args.dropout_rate)}")
-    print(f"Batch Size: {args.batch_size}, type: {type(args.batch_size)}")
-    print(f"Mixed Precision Mode: {args.mp_mode}, type: {type(args.mp_mode)}")
+    print(f"Model type: {args.model_type}")
+    print(f"Learning Rate: {args.learning_rate}")
+    print(f"Dropout Rate: {args.dropout_rate}")
+    print(f"Batch Size: {args.batch_size}")
+    print(f"Mixed Precision Mode: {args.mp_mode}")
 
     print("Running main function...")
     train(
