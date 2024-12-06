@@ -19,6 +19,12 @@ combinations = list(
         model_types, learning_rates, dropout_rates, batch_sizes, mp_modes
     )
 )
+print(f"Total combinations: {len(combinations)}")
+print("-" * 80)
+print(f"Combinations: {combinations}")
+print("-" * 80)
+print("Running experiments...")
+
 iteration_log_file_path = (
     f"{config.LOG_FOLDER}/{config.ITERATION_LOG_FILE_NAME}"
 )
