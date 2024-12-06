@@ -6,7 +6,7 @@ from torchvision import models
 
 
 class CNNModel(nn.Module):
-    def __init__(self):
+    def __init__(self, dropout_rate=config.DROPOUT_RATE):
         super(CNNModel, self).__init__()
         # First layer
         self.conv1 = nn.Conv2d(in_channels=3, out_channels=64, kernel_size=3, padding=1)
@@ -52,11 +52,11 @@ class CNNModel(nn.Module):
         self.flatten = nn.Flatten()
 
         # Fully connected layers
-        self.fc1 = nn.Linear(512 * config.LAST_CONV_LAYER_IMAGE_SIZE, 1024)
+        self.fc1 = nn.Linear((512 * config.LAST_CONV_LAYER_IMAGE_SIZE), 1024)
         self.fc2 = nn.Linear(1024, 512)
         self.fc3 = nn.Linear(512, config.CLASS_AMOUNT)
 
-        self.dropout = nn.Dropout(config.DROPOUT_RATE)
+        self.dropout = nn.Dropout(dropout_rate)
 
     def forward_conv(self, x):
         helper.print_current_memory_usage("conv1", before=True)
@@ -100,7 +100,7 @@ class CNNModel(nn.Module):
 
         return x
 
-    def forward(self, x, epoch=0):
+    def forward(self, x, fine_tune_unfreeze_layer=config.FINE_TUNE_UNFREEZE_LAYER, epoch=0):
         x = self.forward_conv(x)
         x = self.forward_fc(x)
 
@@ -108,25 +108,32 @@ class CNNModel(nn.Module):
 
 
 class VGGModel(nn.Module):
-    def __init__(self):
+    def __init__(self, dropout_rate=config.DROPOUT_RATE):
         super(VGGModel, self).__init__()
-        self.vgg16 = models.vgg16(weights=models.VGG16_Weights.IMAGENET1K_V1)
+        # self.vgg16 = models.vgg16(weights=models.VGG16_Weights.IMAGENET1K_V1)
+        self.vgg16 = models.vgg16()
 
         self.vgg16.classifier = nn.Sequential(
             nn.Linear(512 * 7 * 7, 4096),
             nn.ReLU(True),
-            nn.Dropout(),
+            nn.Dropout(dropout_rate),
             nn.Linear(4096, 4096),
             nn.ReLU(True),
-            nn.Dropout(),
+            nn.Dropout(dropout_rate),
             nn.Linear(4096, config.CLASS_AMOUNT),
         )
 
-    def forward(self, x, epoch=0):
-        if epoch == 0:
-            for param in self.vgg16.features.parameters():
-                param.requires_grad = False
-        if epoch == 5:
-            for param in self.vgg16.features.parameters():
-                param.requires_grad = True
+    def forward(self, x, fine_tune_unfreeze_layer=config.FINE_TUNE_UNFREEZE_LAYER, epoch=0):
+        # if epoch == 0:
+        #     conv_layer_detected = 0
+        #     total_conv_layer = 13
+        #     for param in self.vgg16.features.parameters():
+        #         param.requires_grad = False
+        #         if isinstance(param, nn.Conv2d):
+        #             conv_layer_detected += 1
+        #         if conv_layer_detected >= total_conv_layer - fine_tune_unfreeze_layer:
+        #             param.requires_grad = True
+        # if epoch == 5:
+        #     for param in self.vgg16.features.parameters():
+        #         param.requires_grad = True
         return self.vgg16(x)

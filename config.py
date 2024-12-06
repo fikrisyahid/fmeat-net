@@ -12,7 +12,7 @@ DATASET_DIR = "./dataset/augmented"
 EPOCH_AMOUNT = 5
 DROPOUT_RATE = 0.8
 LEARNING_RATE = 0.0001
-BATCH_SIZE = 32
+BATCH_SIZE = 16
 CLASS_AMOUNT = 3
 FINE_TUNE_UNFREEZE_LAYER = 0
 KERNEL_SIZE = 3
@@ -21,7 +21,6 @@ KERNEL_SIZE = 3
 # PSO hyperparameters
 # =============================================================================
 PSO_BATCH_SIZE = [16, 32, 64, 128, 256]
-PSO_KERNEL_SIZE = [3, 5, 7]
 PSO_FINE_TUNE_UNFREEZE_LAYER = [0, 1, 2, 3, 4, 5]
 
 # =============================================================================
