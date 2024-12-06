@@ -11,7 +11,7 @@ import models
 import config
 
 
-def train(model_type, pso, mp_mode):
+def train(model_type, learning_rate, dropout_rate, batch_size, mp_mode):
     # Initialize mixed precision mode
     CONV_DTYPE, FC_DTYPE = config.MIXED_PRECISION_MODE_COLLECTION.get(
         mp_mode, (torch.float32, torch.float32)
@@ -21,7 +21,11 @@ def train(model_type, pso, mp_mode):
     SUMMARY_DISPLAYED = mp_mode == 0 or mp_mode == 1
 
     # Initialize the model
-    model = models.CNNModel() if model_type == "cnn" else models.VGGModel()
+    model = (
+        models.CNNModel(dropout_rate)
+        if model_type == "cnn"
+        else models.VGGModel(dropout_rate)
+    )
     image_size_based_on_model = (
         224 if model_type == "vgg" else config.IMAGE_X_Y_SIZE
     )
@@ -74,20 +78,16 @@ def train(model_type, pso, mp_mode):
 
     # Make the loader for each dataset
     train_loader = DataLoader(
-        train_dataset, batch_size=config.BATCH_SIZE, shuffle=True
+        train_dataset, batch_size=batch_size, shuffle=True
     )
-    val_loader = DataLoader(
-        val_dataset, batch_size=config.BATCH_SIZE, shuffle=False
-    )
-    test_loader = DataLoader(
-        test_dataset, batch_size=config.BATCH_SIZE, shuffle=False
-    )
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
     # Define loss function
     criterion = nn.CrossEntropyLoss()
 
     # Define optimizer
-    optimizer = torch.optim.Adam(model.parameters(), lr=config.LEARNING_RATE)
+    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
     # Training loop
     for epoch in tqdm(range(config.EPOCH_AMOUNT), desc="Epochs"):
@@ -154,22 +154,22 @@ def train(model_type, pso, mp_mode):
             f"Validation Loss: {val_loss:.4f}, Accuracy: {val_accuracy:.4f}\n"
         )
 
-        # Testing phase
-        model.eval()
-        test_loss = 0.0
-        correct = 0
-        total = 0
-        with torch.no_grad():
-            for inputs, labels in tqdm(test_loader, desc="Testing"):
-                inputs, labels = inputs.to(device), labels.to(device)
-                inputs = inputs.to(FC_DTYPE)
-                outputs = model(inputs)
-                loss = criterion(outputs, labels)
-                test_loss += loss.item() * inputs.size(0)
-                _, predicted = torch.max(outputs, 1)
-                total += labels.size(0)
-                correct += (predicted == labels).sum().item()
+    # Testing phase
+    model.eval()
+    test_loss = 0.0
+    correct = 0
+    total = 0
+    with torch.no_grad():
+        for inputs, labels in tqdm(test_loader, desc="Testing"):
+            inputs, labels = inputs.to(device), labels.to(device)
+            inputs = inputs.to(FC_DTYPE)
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            test_loss += loss.item() * inputs.size(0)
+            _, predicted = torch.max(outputs, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
 
-        test_loss = test_loss / len(test_loader.dataset)
-        test_accuracy = correct / total
-        print(f"Test Loss: {test_loss:.4f}, Accuracy: {test_accuracy:.4f}")
+    test_loss = test_loss / len(test_loader.dataset)
+    test_accuracy = correct / total
+    print(f"Test Loss: {test_loss:.4f}, Accuracy: {test_accuracy:.4f}")
