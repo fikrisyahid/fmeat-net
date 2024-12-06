@@ -20,7 +20,7 @@ combinations = list(
     )
 )
 
-# Note: Combination is a list, it can be reversed like combinations.reverse()
+# Note: Combination is a list, it can be reversed by running combinations.reverse()
 # in case you want to reverse the order of the combinations from the biggest possible value
 
 print(f"Total combinations: {len(combinations)}")
