@@ -81,7 +81,10 @@ def add_yellow_tone(image):
     return Image.fromarray(image_np.astype(np.uint8))
 
 
-def generate_augmented_images(source_dir="./dataset/validation", destination_dir="./dataset/augmented/validation"):
+def generate_augmented_images(
+    source_dir="./dataset/validation",
+    destination_dir="./dataset/augmented/validation",
+):
     # Define separate transforms for each augmentation type
     augmentation_transforms = {
         "resize": v2.Compose(
@@ -157,9 +160,13 @@ def generate_augmented_images(source_dir="./dataset/validation", destination_dir
         print(f"\nGenerating {aug_type} augmented images...")
 
         # Create dataset with current transform
-        augmented_dataset = datasets.ImageFolder(root=source_dir, transform=transform)
+        augmented_dataset = datasets.ImageFolder(
+            root=source_dir, transform=transform
+        )
         batch_size = 32
-        train_loader = DataLoader(augmented_dataset, batch_size=batch_size, shuffle=False)
+        train_loader = DataLoader(
+            augmented_dataset, batch_size=batch_size, shuffle=False
+        )
 
         # Generate and save augmented images
         for batch_idx, (images, labels) in enumerate(train_loader):

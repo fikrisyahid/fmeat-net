@@ -6,14 +6,24 @@
 
 
 # helper.visualize_augmentations("./dataset/training/sapi/s7.jpg")
-# helper.generate_augmented_images(source_dir="./dataset/training", destination_dir="./dataset/augmented/training")
-# helper.generate_augmented_images(source_dir="./dataset/validation", destination_dir="./dataset/augmented/validation")
-# helper.generate_augmented_images(source_dir="./dataset/testing", destination_dir="./dataset/augmented/testing")
+# helper.generate_augmented_images(
+#     source_dir="./dataset/training",
+#     destination_dir="./dataset/augmented/training",
+# )
+# helper.generate_augmented_images(
+#     source_dir="./dataset/validation",
+#     destination_dir="./dataset/augmented/validation",
+# )
+# helper.generate_augmented_images(
+#     source_dir="./dataset/testing",
+#     destination_dir="./dataset/augmented/testing",
+# )
 # print(helper.get_normalization_mean_std("./dataset/augmented/training"))
 # print(helper.get_normalization_mean_std("./dataset/augmented/validation"))
 # print(helper.get_normalization_mean_std("./dataset/augmented/testing"))
 
 # print(helper.round_to_closest_possible([16, 32, 64], 70))
+
 
 # class Animal:
 #     def __init__(self, name, age):
@@ -45,7 +55,9 @@
 #         description="Script buat menjalankan model dengan konfigurasi tertentu."
 #     )
 #     parser.add_argument(
-#         "model_type", type=str, help="Tipe model yang mau digunakan, misal: 'CNN'"
+#         "model_type",
+#         type=str,
+#         help="Tipe model yang mau digunakan, misal: 'CNN'",
 #     )
 #     parser.add_argument(
 #         "pso",
@@ -66,6 +78,7 @@
 
 # from pyswarms.single import GlobalBestPSO
 
+
 # # Define a simple objective function
 # def objective_func(x):
 #     # Ambil hyperparameter dari partikel PSO
@@ -76,7 +89,11 @@
 #     # Simulasi perhitungan "loss" dari model yang pakai hyperparameter ini
 #     # Misalnya kita buat loss = (learning_rate - 0.005)^2 + (batch_size - 64)^2 + (dropout_rate - 0.2)^2
 #     # Tujuannya biar nilai loss sekecil mungkin di sekitar learning rate = 0.005, batch size = 64, dropout rate = 0.2
-#     loss = (learning_rate - 0.005) ** 2 + (batch_size - 64) ** 2 + (dropout_rate - 0.2) ** 2
+#     loss = (
+#         (learning_rate - 0.005) ** 2
+#         + (batch_size - 64) ** 2
+#         + (dropout_rate - 0.2) ** 2
+#     )
 
 #     return loss
 
@@ -103,7 +120,9 @@
 # }
 
 # # Inisialisasi PSO optimizer
-# optimizer = GlobalBestPSO(n_particles=40, dimensions=3, options=options, bounds=bounds)
+# optimizer = GlobalBestPSO(
+#     n_particles=40, dimensions=3, options=options, bounds=bounds
+# )
 
 # # Run optimization
 # best_score, best_params = optimizer.optimize(objective_func, iters=100)
@@ -131,7 +150,9 @@
 # from pyswarms.utils.plotters.formatters import Mesher
 
 # options = {"c1": 0.5, "c2": 0.3, "w": 0.9}
-# optimizer = ps.single.GlobalBestPSO(n_particles=50, dimensions=2, options=options)
+# optimizer = ps.single.GlobalBestPSO(
+#     n_particles=50, dimensions=2, options=options
+# )
 # cost, pos = optimizer.optimize(fx.sphere, iters=100)
 
 # # Initialize mesher with sphere function
@@ -139,7 +160,9 @@
 
 
 # # Make animation
-# animation = plot_contour(pos_history=optimizer.pos_history, mesher=m, mark=(0, 0))
+# animation = plot_contour(
+#     pos_history=optimizer.pos_history, mesher=m, mark=(0, 0)
+# )
 
 # # Enables us to view it in a Jupyter notebook
 # animation.save("plot0.gif", writer="imagemagick", fps=10)

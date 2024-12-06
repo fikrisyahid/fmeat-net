@@ -2,7 +2,9 @@ import argparse
 from train import main
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Script untuk menjalankan model dengan konfigurasi tertentu.")
+    parser = argparse.ArgumentParser(
+        description="Script untuk menjalankan model dengan konfigurasi tertentu."
+    )
     parser.add_argument(
         "model_type",
         type=lambda x: (str(x).lower()),
@@ -13,7 +15,9 @@ if __name__ == "__main__":
         type=lambda x: (str(x).lower() == "true"),
         help="PSO aktif atau tidak: True atau False",
     )
-    parser.add_argument("mp_mode", type=int, help="Mode Mixed Precision: 0, 1, atau 2")
+    parser.add_argument(
+        "mp_mode", type=int, help="Mode Mixed Precision: 0, 1, atau 2"
+    )
 
     args = parser.parse_args()
 
