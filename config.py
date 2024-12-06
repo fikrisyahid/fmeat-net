@@ -4,7 +4,7 @@ import torch
 # Default hyperparameters
 # =============================================================================
 DATASET_DIR = "./dataset/augmented"
-EPOCH_AMOUNT = 5
+EPOCH_AMOUNT = 20
 DROPOUT_RATE = 0.8
 LEARNING_RATE = 0.0001
 BATCH_SIZE = 32
