@@ -16,6 +16,7 @@ from sklearn.metrics import (
     recall_score,
     f1_score,
     confusion_matrix,
+    classification_report,
 )
 import pynvml
 import matplotlib.pyplot as plt
@@ -195,7 +196,10 @@ def train(model_type, learning_rate, dropout_rate, batch_size, mp_mode):
         os.makedirs(config.LOG_FOLDER, exist_ok=True)
 
         # Define the log file path
-        log_file_path = f"{config.LOG_FOLDER}/{helper.generate_log_file_name(model_type, learning_rate, dropout_rate, batch_size, mp_mode)}.csv"
+        file_name = helper.generate_log_file_name(
+            model_type, learning_rate, dropout_rate, batch_size, mp_mode
+        )
+        log_file_path = f"{config.LOG_FOLDER}/{file_name}.csv"
 
         # Create a DataFrame with the metrics
         metrics_df = pd.DataFrame(
@@ -301,9 +305,23 @@ def train(model_type, learning_rate, dropout_rate, batch_size, mp_mode):
     plt.xlabel("Predicted")
     plt.ylabel("Actual")
     plt.title("Confusion Matrix")
-    conf_matrix_image_path = f"{config.LOG_FOLDER}/{helper.generate_log_file_name(model_type, learning_rate, dropout_rate, batch_size, mp_mode)}_confusion_matrix.png"
+    conf_matrix_image_path = (
+        f"{config.LOG_FOLDER}/{file_name}_confusion_matrix.png"
+    )
     plt.savefig(conf_matrix_image_path)
     plt.close()
+
+    # Generate and save classification report
+    class_report = classification_report(
+        all_test_labels,
+        all_test_predictions,
+        target_names=["babi", "oplosan", "sapi"],
+    )
+    class_report_file_path = (
+        f"{config.LOG_FOLDER}/{file_name}_classification_report.txt"
+    )
+    with open(class_report_file_path, "w") as f:
+        f.write(class_report)
 
     # Shutdown NVML
     pynvml.nvmlShutdown()
