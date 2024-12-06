@@ -100,7 +100,7 @@ class CNNModel(nn.Module):
 
         return x
 
-    def forward(self, x):
+    def forward(self, x, fine_tune_unfreeze_layer=config.FINE_TUNE_UNFREEZE_LAYER, epoch=0):
         x = self.forward_conv(x)
         x = self.forward_fc(x)
 
@@ -123,5 +123,17 @@ class VGGModel(nn.Module):
             nn.Linear(4096, config.CLASS_AMOUNT),
         )
 
-    def forward(self, x):
+    def forward(self, x, fine_tune_unfreeze_layer=config.FINE_TUNE_UNFREEZE_LAYER, epoch=0):
+        if epoch == 0:
+            conv_layer_detected = 0
+            total_conv_layer = 13
+            for param in self.vgg16.features.parameters():
+                param.requires_grad = False
+                if isinstance(param, nn.Conv2d):
+                    conv_layer_detected += 1
+                if conv_layer_detected >= total_conv_layer - fine_tune_unfreeze_layer:
+                    param.requires_grad = True
+        if epoch == 5:
+            for param in self.vgg16.features.parameters():
+                param.requires_grad = True
         return self.vgg16(x)

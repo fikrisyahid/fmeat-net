@@ -10,6 +10,18 @@ from PIL import Image
 import numpy as np
 
 
+def round_to_closest_possible(int_list, float_value):
+    """
+    Round a float value to the closest possible value in a list of integers
+    Args:
+        int_list (list): List of integers
+        float_value (float): Float value to be rounded
+    Returns:
+        int: Rounded integer value
+    """
+    return int(min(int_list, key=lambda x: abs(x - float_value)))
+
+
 def print_current_memory_usage(layer_str, before=False):
     if config.PRINT_MEMORY_USAGE:
         print(

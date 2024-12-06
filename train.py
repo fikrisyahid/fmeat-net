@@ -104,10 +104,7 @@ def train(model_type, learning_rate, dropout_rate, batch_size, mp_mode):
 
             inputs = inputs.to(FC_DTYPE)
             with torch.autocast(device_type="cuda", dtype=CONV_DTYPE):
-                outputs = model(
-                    inputs,
-                    epoch,
-                )
+                outputs = model(inputs)
                 loss = criterion(outputs, labels)
 
             # Backward pass and optimization

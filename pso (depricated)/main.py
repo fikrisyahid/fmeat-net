@@ -1,5 +1,5 @@
 import argparse
-from pso_train import main
+from train import main
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Script untuk menjalankan model dengan konfigurasi tertentu.")
