@@ -33,6 +33,8 @@ MIXED_PRECISION_MODE_COLLECTION = {
 # Log settings
 # =============================================================================
 PRINT_MEMORY_USAGE = False
+LOG_FOLDER = "./logs"
+TESTING_ACCURACY_LOG_FILE_NAME = "testing_accuracy.csv"
 
 # =============================================================================
 # Training combinations

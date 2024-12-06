@@ -9,6 +9,21 @@ import time
 from tqdm import tqdm
 import models
 import config
+import helper
+import pandas as pd
+from sklearn.metrics import (
+    precision_score,
+    recall_score,
+    f1_score,
+    confusion_matrix,
+)
+import pynvml
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Initialize NVML
+pynvml.nvmlInit()
+handle = pynvml.nvmlDeviceGetHandleByIndex(0)  # GPU 0 (NVIDIA)
 
 
 def train(model_type, learning_rate, dropout_rate, batch_size, mp_mode):
@@ -96,6 +111,7 @@ def train(model_type, learning_rate, dropout_rate, batch_size, mp_mode):
         correct_train = 0
         total_train = 0
         start_time = time.time()
+
         for inputs, labels in tqdm(train_loader, desc="Training"):
             inputs, labels = inputs.to(device), labels.to(device)
 
@@ -118,14 +134,15 @@ def train(model_type, learning_rate, dropout_rate, batch_size, mp_mode):
             correct_train += (predicted == labels).sum().item()
 
         end_time = time.time()
-        iteration_time = end_time - start_time
+        training_time = end_time - start_time
         train_accuracy = correct_train / total_train
+        train_loss = running_loss / len(train_loader)
 
         print(
-            f"Epoch {epoch + 1}/{config.EPOCH_AMOUNT}, Time: {iteration_time:.2f} seconds"
+            f"Epoch {epoch + 1}/{config.EPOCH_AMOUNT}, Time: {training_time:.2f} seconds"
         )
         print(
-            f"Training Loss: {running_loss / len(train_loader)}, Training Accuracy: {train_accuracy:.4f}"
+            f"Training Loss: {train_loss}, Training Accuracy: {train_accuracy:.4f}"
         )
 
         # Validation loop
@@ -133,6 +150,9 @@ def train(model_type, learning_rate, dropout_rate, batch_size, mp_mode):
         val_loss = 0.0
         correct = 0
         total = 0
+        all_labels = []
+        all_predictions = []
+
         with torch.no_grad():
             for inputs, labels in tqdm(val_loader, desc="Validation"):
                 inputs, labels = inputs.to(device), labels.to(device)
@@ -144,18 +164,72 @@ def train(model_type, learning_rate, dropout_rate, batch_size, mp_mode):
                 _, predicted = torch.max(outputs, 1)
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
+                all_labels.extend(labels.cpu().numpy())
+                all_predictions.extend(predicted.cpu().numpy())
 
         val_loss = val_loss / len(val_loader.dataset)
         val_accuracy = correct / total
-        print(
-            f"Validation Loss: {val_loss:.4f}, Accuracy: {val_accuracy:.4f}\n"
+        precision = precision_score(
+            all_labels, all_predictions, average="weighted"
         )
+        recall = recall_score(all_labels, all_predictions, average="weighted")
+        f1 = f1_score(all_labels, all_predictions, average="weighted")
+
+        # Get GPU power usage
+        power_usage = (
+            pynvml.nvmlDeviceGetPowerUsage(handle) / 1000.0  # Convert to Watts
+        )
+
+        # Get GPU memory usage
+        memory_info = pynvml.nvmlDeviceGetMemoryInfo(handle)
+        vram_usage = memory_info.used / (1024**2)  # Convert to MB
+
+        print(
+            f"Validation Loss: {val_loss:.4f}, Validation Accuracy: {val_accuracy:.4f}\n"
+            f"Precision: {precision:.4f}, Recall: {recall:.4f}, F1 Score: {f1:.4f}, "
+            f"GPU Power Usage: {power_usage:.2f} W, "
+            f"GPU VRAM Usage: {vram_usage:.2f} MB\n"
+        )
+
+        # Ensure the log directory exists
+        os.makedirs(config.LOG_FOLDER, exist_ok=True)
+
+        # Define the log file path
+        log_file_path = f"{config.LOG_FOLDER}/{helper.generate_log_file_name(model_type, learning_rate, dropout_rate, batch_size, mp_mode)}.csv"
+
+        # Create a DataFrame with the metrics
+        metrics_df = pd.DataFrame(
+            {
+                "epoch": [epoch + 1],
+                "training_loss": [train_loss],
+                "training_accuracy": [train_accuracy],
+                "validation_loss": [val_loss],
+                "validation_accuracy": [val_accuracy],
+                "precision": [precision],
+                "recall": [recall],
+                "f1_score": [f1],
+                "gpu_watt_usage": [power_usage],
+                "gpu_vram_usage": [vram_usage],
+                "training_time": [training_time],
+            }
+        )
+
+        # Append the metrics to the CSV file, creating it if it does not exist
+        if not os.path.isfile(log_file_path):
+            metrics_df.to_csv(log_file_path, index=False)
+        else:
+            metrics_df.to_csv(
+                log_file_path, mode="a", header=False, index=False
+            )
 
     # Testing phase
     model.eval()
     test_loss = 0.0
     correct = 0
     total = 0
+    all_test_labels = []
+    all_test_predictions = []
+
     with torch.no_grad():
         for inputs, labels in tqdm(test_loader, desc="Testing"):
             inputs, labels = inputs.to(device), labels.to(device)
@@ -166,7 +240,70 @@ def train(model_type, learning_rate, dropout_rate, batch_size, mp_mode):
             _, predicted = torch.max(outputs, 1)
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
+            all_test_labels.extend(labels.cpu().numpy())
+            all_test_predictions.extend(predicted.cpu().numpy())
 
     test_loss = test_loss / len(test_loader.dataset)
     test_accuracy = correct / total
-    print(f"Test Loss: {test_loss:.4f}, Accuracy: {test_accuracy:.4f}")
+    test_precision = precision_score(
+        all_test_labels, all_test_predictions, average="weighted"
+    )
+    test_recall = recall_score(
+        all_test_labels, all_test_predictions, average="weighted"
+    )
+    test_f1 = f1_score(
+        all_test_labels, all_test_predictions, average="weighted"
+    )
+
+    print(
+        f"Test Loss: {test_loss:.4f}, Test Accuracy: {test_accuracy:.4f}, "
+        f"Test Precision: {test_precision:.4f}, Test Recall: {test_recall:.4f}, Test F1 Score: {test_f1:.4f}\n"
+    )
+
+    testing_log_file_path = (
+        f"{config.LOG_FOLDER}/{config.TESTING_ACCURACY_LOG_FILE_NAME}"
+    )
+
+    # Create a DataFrame with the testing metrics
+    test_metrics_df = pd.DataFrame(
+        {
+            "model": [model_type],
+            "learning_rate": [learning_rate],
+            "dropout_rate": [dropout_rate],
+            "batch_size": [batch_size],
+            "mixed_precision_mode": [mp_mode],
+            "test_loss": [test_loss],
+            "test_accuracy": [test_accuracy],
+            "test_precision": [test_precision],
+            "test_recall": [test_recall],
+            "test_f1_score": [test_f1],
+        }
+    )
+
+    # Append the testing metrics to the CSV file, creating it if it does not exist
+    if not os.path.isfile(testing_log_file_path):
+        test_metrics_df.to_csv(testing_log_file_path, index=False)
+    else:
+        test_metrics_df.to_csv(
+            testing_log_file_path, mode="a", header=False, index=False
+        )
+
+    # Generate and save confusion matrix image
+    conf_matrix = confusion_matrix(all_test_labels, all_test_predictions)
+    plt.figure(figsize=(10, 7))
+    sns.heatmap(
+        conf_matrix,
+        annot=True,
+        fmt="d",
+        xticklabels=["babi", "oplosan", "sapi"],
+        yticklabels=["babi", "oplosan", "sapi"],
+    )
+    plt.xlabel("Predicted")
+    plt.ylabel("Actual")
+    plt.title("Confusion Matrix")
+    conf_matrix_image_path = f"{config.LOG_FOLDER}/{helper.generate_log_file_name(model_type, learning_rate, dropout_rate, batch_size, mp_mode)}_confusion_matrix.png"
+    plt.savefig(conf_matrix_image_path)
+    plt.close()
+
+    # Shutdown NVML
+    pynvml.nvmlShutdown()

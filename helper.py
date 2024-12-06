@@ -10,6 +10,14 @@ from PIL import Image
 import numpy as np
 
 
+def generate_log_file_name(
+    model_type, learning_rate, dropout_rate, batch_size, mp_mode
+):
+    # Generate log file name based on model type and hyperparameters
+    log_file_name = f"{model_type}_lr{learning_rate}_dr{dropout_rate}_bs{batch_size}_mp{mp_mode}"
+    return log_file_name
+
+
 def print_current_memory_usage(layer_str, before=False):
     if config.PRINT_MEMORY_USAGE:
         print(
