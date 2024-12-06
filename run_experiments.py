@@ -19,6 +19,10 @@ combinations = list(
         model_types, learning_rates, dropout_rates, batch_sizes, mp_modes
     )
 )
+
+# Note: Combination is a list, it can be reversed like combinations.reverse()
+# in case you want to reverse the order of the combinations from the biggest possible value
+
 print(f"Total combinations: {len(combinations)}")
 print("-" * 80)
 print(f"Combinations: {combinations}")
