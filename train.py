@@ -323,5 +323,9 @@ def train(model_type, learning_rate, dropout_rate, batch_size, mp_mode):
     with open(class_report_file_path, "w") as f:
         f.write(class_report)
 
+    # Save the trained model
+    model_file_path = f"{config.LOG_FOLDER}/{file_name}_model.pth"
+    torch.save(model.state_dict(), model_file_path)
+
     # Shutdown NVML
     pynvml.nvmlShutdown()
