@@ -34,6 +34,12 @@ iteration_log_file_path = (
 )
 
 for idx, (model_type, lr, dr, bs, mp_mode) in enumerate(combinations):
+    # if (idx < 137):
+    #     print(f"Skipping combination {idx + 1}/{len(combinations)}: Model={model_type}, LR={lr}, Dropout={dr}, Batch Size={bs}, MP Mode={mp_mode}")
+    #     continue
+    # if (model_type == "vgg" and mp_mode == 2 and (bs == 32 or bs == 64)):
+    #     print(f"Skipping combination because not enough memory {idx + 1}/{len(combinations)}: Model={model_type}, LR={lr}, Dropout={dr}, Batch Size={bs}, MP Mode={mp_mode}")
+    #     continue
     print(
         f"Running combination {idx + 1}/{len(combinations)}: Model={model_type}, LR={lr}, Dropout={dr}, Batch Size={bs}, MP Mode={mp_mode}"
     )
