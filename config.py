@@ -3,7 +3,7 @@ import torch
 # =============================================================================
 # Default hyperparameters
 # =============================================================================
-DATASET_DIR = "./dataset/augmented"
+DATASET_DIR = "./dataset"
 EPOCH_AMOUNT = 20
 DROPOUT_RATE = 0.8
 LEARNING_RATE = 0.0001
@@ -33,9 +33,10 @@ MIXED_PRECISION_MODE_COLLECTION = {
 # Log settings
 # =============================================================================
 PRINT_MEMORY_USAGE = False
-LOG_FOLDER = "./logs"
+LOG_FOLDER = "./logs/publikasi"
 TESTING_ACCURACY_LOG_FILE_NAME = "testing_accuracy.csv"
 ITERATION_LOG_FILE_NAME = "iteration_log.txt"  # Store only the filename
+SAVE_MODEL = True
 
 # =============================================================================
 # Training combinations
