@@ -8,6 +8,8 @@ import os
 import matplotlib.pyplot as plt
 from PIL import Image
 import numpy as np
+import itertools
+import pandas as pd
 
 
 def generate_log_file_name(
@@ -275,3 +277,69 @@ def visualize_augmentations(image_path):
 
     plt.tight_layout()
     plt.show()
+
+
+def generate_vram_usage_csv():
+    # Define the parameter ranges
+    model_types = ["cnn", "vgg"]
+    learning_rates = [0.01, 0.001, 0.0001]
+    dropout_rates = [0.2, 0.5, 0.8]
+    batch_sizes = [16, 32, 64]
+    mp_modes = [0, 1, 2]  # Mixed precision modes
+
+    # Generate all combinations of parameters
+    combinations = list(
+        itertools.product(
+            model_types, learning_rates, dropout_rates, batch_sizes, mp_modes
+        )
+    )
+
+    log_dir = "./logs"
+
+    # Create a new DataFrame with the required columns
+    rows = []
+
+    for (
+        model_type,
+        learning_rate,
+        dropout_rate,
+        batch_size,
+        mp_mode,
+    ) in combinations:
+        log_file_name = generate_log_file_name(
+            model_type, learning_rate, dropout_rate, batch_size, mp_mode
+        )
+        log_file_path = os.path.join(log_dir, f"{log_file_name}.csv")
+        if os.path.exists(log_file_path):
+            data = pd.read_csv(log_file_path)
+            average_gpu_vram = data["gpu_vram_usage"].mean()
+            print(f"{log_file_name} with Average VRAM usage: {average_gpu_vram} GB")
+
+            # Append the row to the list
+            rows.append(
+                {
+                    "model": model_type,
+                    "learning_rate": learning_rate,
+                    "dropout_rate": dropout_rate,
+                    "batch_size": batch_size,
+                    "mixed_precision_mode": mp_mode,
+                    "average_vram_usage": average_gpu_vram,
+                }
+            )
+
+    # After all iterations, create a DataFrame from the rows
+    df = pd.DataFrame(rows)
+
+    # Define the output file path
+    output_file_path = os.path.join(log_dir, "average_gpu_vram_usage.xlsx")
+
+    # Check if the file already exists
+    if os.path.exists(output_file_path):
+        # If it exists, append the new data to the existing file
+        existing_df = pd.read_excel(output_file_path)
+        df = pd.concat([existing_df, df], ignore_index=True)
+
+    # Save the DataFrame to an Excel file
+    df.to_excel(output_file_path, index=False)
+
+    print("Finished generating VRAM usage CSV file.")
