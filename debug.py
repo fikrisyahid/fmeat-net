@@ -204,3 +204,7 @@ helper.get_average_data_from_csv(new_column="average_training_time", calculated_
 df = pd.read_csv("logs/non-augmented/testing_accuracy.csv")
 # convert to xlsx
 df.to_excel("logs/non-augmented/testing_accuracy_non_augmented.xlsx", index=False)
+
+# import helper
+
+# helper.fix_csv_combination_sort("logs/non-augmented/testing_accuracy.csv", "logs/non-augmented/testing_accuracy_fixed.csv")

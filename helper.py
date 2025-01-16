@@ -23,7 +23,7 @@ def generate_log_file_name(
 def print_current_memory_usage(layer_str, before=False):
     if config.PRINT_MEMORY_USAGE:
         print(
-            f"Memory usage {"before" if before else "after"} {layer_str}:",
+            f"Memory usage {'before' if before else 'after'} {layer_str}:",
             torch.cuda.memory_allocated() / 1024**3,
             "GB",
         )
@@ -343,3 +343,25 @@ def get_average_data_from_csv(new_column, calculated_key):
     df.to_excel(output_file_path, index=False)
 
     print("Finished generating VRAM usage CSV file.")
+
+
+def fix_csv_combination_sort(csv_source_path, csv_destination_path):
+    # Load the CSV file
+    df = pd.read_csv(csv_source_path)
+
+    # Sort the DataFrame based on the model type and hyperparameters
+    df = df.sort_values(
+        by=[
+            "model",
+            "learning_rate",
+            "dropout_rate",
+            "batch_size",
+            "mixed_precision_mode",
+        ],
+        ascending=[True, False, True, True, True]  # Sort learning_rate in descending order
+    )
+
+    # Save the sorted DataFrame to a new CSV file
+    df.to_csv(csv_destination_path, index=False)
+
+    print("Finished sorting the CSV file.")
