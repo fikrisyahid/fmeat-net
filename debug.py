@@ -194,5 +194,13 @@
 #     generate_csv_row(i)
 
 import helper
+import pandas as pd
 
-helper.generate_vram_usage_csv()
+helper.get_average_data_from_csv(new_column="average_gpu_watt_usage", calculated_key="gpu_watt_usage")
+helper.get_average_data_from_csv(new_column="average_gpu_vram_usage", calculated_key="gpu_vram_usage")
+helper.get_average_data_from_csv(new_column="average_training_time", calculated_key="training_time")
+
+
+df = pd.read_csv("logs/publikasi/testing_accuracy.csv")
+# convert to xlsx
+df.to_excel("logs/publikasi/testing_accuracy.xlsx", index=False)

@@ -8,7 +8,7 @@ model_types = ["cnn", "vgg"]
 learning_rates = [0.01, 0.001, 0.0001]
 dropout_rates = [0.2, 0.5, 0.8]
 batch_sizes = [16, 32, 64]
-mp_modes = [0, 1, 2]  # Mixed precision modes
+mp_modes = [1, 2]  # Mixed precision modes
 
 # Ensure the log directory exists
 os.makedirs(config.LOG_FOLDER, exist_ok=True)
@@ -34,7 +34,7 @@ iteration_log_file_path = (
 )
 
 for idx, (model_type, lr, dr, bs, mp_mode) in enumerate(combinations):
-    # if (idx < 137):
+    # if (idx < 91):
     #     print(f"Skipping combination {idx + 1}/{len(combinations)}: Model={model_type}, LR={lr}, Dropout={dr}, Batch Size={bs}, MP Mode={mp_mode}")
     #     continue
     # if (model_type == "vgg" and mp_mode == 2 and (bs == 32 or bs == 64)):

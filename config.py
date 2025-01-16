@@ -33,7 +33,7 @@ MIXED_PRECISION_MODE_COLLECTION = {
 # Log settings
 # =============================================================================
 PRINT_MEMORY_USAGE = False
-LOG_FOLDER = "./logs/publikasi"
+LOG_FOLDER = "./logs/non-augmented"
 TESTING_ACCURACY_LOG_FILE_NAME = "testing_accuracy.csv"
 ITERATION_LOG_FILE_NAME = "iteration_log.txt"  # Store only the filename
 SAVE_MODEL = True

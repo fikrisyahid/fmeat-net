@@ -279,7 +279,7 @@ def visualize_augmentations(image_path):
     plt.show()
 
 
-def generate_vram_usage_csv():
+def get_average_data_from_csv(new_column, calculated_key):
     # Define the parameter ranges
     model_types = ["cnn", "vgg"]
     learning_rates = [0.01, 0.001, 0.0001]
@@ -294,7 +294,7 @@ def generate_vram_usage_csv():
         )
     )
 
-    log_dir = "./logs"
+    log_dir = "./logs/non-augmented"
 
     # Create a new DataFrame with the required columns
     rows = []
@@ -312,8 +312,8 @@ def generate_vram_usage_csv():
         log_file_path = os.path.join(log_dir, f"{log_file_name}.csv")
         if os.path.exists(log_file_path):
             data = pd.read_csv(log_file_path)
-            average_gpu_vram = data["gpu_vram_usage"].mean()
-            print(f"{log_file_name} with Average VRAM usage: {average_gpu_vram} GB")
+            average_value = data[calculated_key].mean()
+            print(f"{log_file_name} with {new_column}: {average_value} GB")
 
             # Append the row to the list
             rows.append(
@@ -323,7 +323,7 @@ def generate_vram_usage_csv():
                     "dropout_rate": dropout_rate,
                     "batch_size": batch_size,
                     "mixed_precision_mode": mp_mode,
-                    "average_vram_usage": average_gpu_vram,
+                    f"{new_column}": average_value,
                 }
             )
 
@@ -331,7 +331,7 @@ def generate_vram_usage_csv():
     df = pd.DataFrame(rows)
 
     # Define the output file path
-    output_file_path = os.path.join(log_dir, "average_gpu_vram_usage.xlsx")
+    output_file_path = os.path.join(log_dir, f"{new_column}.xlsx")
 
     # Check if the file already exists
     if os.path.exists(output_file_path):
