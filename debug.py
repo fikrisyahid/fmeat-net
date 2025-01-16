@@ -201,6 +201,6 @@ helper.get_average_data_from_csv(new_column="average_gpu_vram_usage", calculated
 helper.get_average_data_from_csv(new_column="average_training_time", calculated_key="training_time")
 
 
-df = pd.read_csv("logs/publikasi/testing_accuracy.csv")
+df = pd.read_csv("logs/non-augmented/testing_accuracy.csv")
 # convert to xlsx
-df.to_excel("logs/publikasi/testing_accuracy.xlsx", index=False)
+df.to_excel("logs/non-augmented/testing_accuracy_non_augmented.xlsx", index=False)
