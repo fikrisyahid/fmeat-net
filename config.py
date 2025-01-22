@@ -3,7 +3,7 @@ import torch
 # =============================================================================
 # Default hyperparameters
 # =============================================================================
-DATASET_DIR = "./dataset"
+DATASET_DIR = "./dataset/augmented"
 EPOCH_AMOUNT = 20
 DROPOUT_RATE = 0.8
 LEARNING_RATE = 0.0001
@@ -33,73 +33,7 @@ MIXED_PRECISION_MODE_COLLECTION = {
 # Log settings
 # =============================================================================
 PRINT_MEMORY_USAGE = False
-LOG_FOLDER = "./logs/non-augmented"
+LOG_FOLDER = "./logs-augmented"
 TESTING_ACCURACY_LOG_FILE_NAME = "testing_accuracy.csv"
 ITERATION_LOG_FILE_NAME = "iteration_log.txt"  # Store only the filename
 SAVE_MODEL = True
-
-# =============================================================================
-# Training combinations
-# =============================================================================
-TRAINING_COMBINATION = [
-    {
-        "model_type": "CNN",
-        "pso": False,
-        "mp_mode": 0,
-    },
-    {
-        "model_type": "CNN",
-        "pso": True,
-        "mp_mode": 0,
-    },
-    {
-        "model_type": "CNN",
-        "pso": False,
-        "mp_mode": 1,
-    },
-    {
-        "model_type": "CNN",
-        "pso": False,
-        "mp_mode": 2,
-    },
-    {
-        "model_type": "CNN",
-        "pso": True,
-        "mp_mode": 1,
-    },
-    {
-        "model_type": "CNN",
-        "pso": True,
-        "mp_mode": 2,
-    },
-    {
-        "model_type": "VGG",
-        "pso": False,
-        "mp_mode": 0,
-    },
-    {
-        "model_type": "VGG",
-        "pso": True,
-        "mp_mode": 0,
-    },
-    {
-        "model_type": "VGG",
-        "pso": False,
-        "mp_mode": 1,
-    },
-    {
-        "model_type": "VGG",
-        "pso": False,
-        "mp_mode": 2,
-    },
-    {
-        "model_type": "VGG",
-        "pso": True,
-        "mp_mode": 1,
-    },
-    {
-        "model_type": "VGG",
-        "pso": True,
-        "mp_mode": 2,
-    },
-]
