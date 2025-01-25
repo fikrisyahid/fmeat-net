@@ -365,3 +365,23 @@ def fix_csv_combination_sort(csv_source_path, csv_destination_path):
     df.to_csv(csv_destination_path, index=False)
 
     print("Finished sorting the CSV file.")
+
+def get_correlation_matrix(excel_path):
+    # Load the CSV file
+    df = pd.read_excel(excel_path)
+
+    # Filter string column
+    df = df.select_dtypes(include=["float64", "int64"])
+
+    # Get the correlation matrix
+    corr = df.corr()
+
+    # Plot the correlation matrix
+    plt.figure(figsize=(10, 8))
+    plt.matshow(corr, cmap="coolwarm", fignum=1)
+    plt.colorbar()
+    plt.xticks(range(len(corr.columns)), corr.columns, rotation=45)
+    plt.yticks(range(len(corr.columns)), corr.columns)
+    plt.show()
+
+    print("Finished generating the correlation matrix.")

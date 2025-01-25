@@ -193,18 +193,22 @@
 # for i in range(21):
 #     generate_csv_row(i)
 
-import helper
-import pandas as pd
+# import helper
+# import pandas as pd
 
-helper.get_average_data_from_csv(new_column="average_gpu_watt_usage", calculated_key="gpu_watt_usage")
-helper.get_average_data_from_csv(new_column="average_gpu_vram_usage", calculated_key="gpu_vram_usage")
-helper.get_average_data_from_csv(new_column="average_training_time", calculated_key="training_time")
+# helper.get_average_data_from_csv(new_column="average_gpu_watt_usage", calculated_key="gpu_watt_usage")
+# helper.get_average_data_from_csv(new_column="average_gpu_vram_usage", calculated_key="gpu_vram_usage")
+# helper.get_average_data_from_csv(new_column="average_training_time", calculated_key="training_time")
 
 
-df = pd.read_csv("logs/non-augmented/testing_accuracy.csv")
-# convert to xlsx
-df.to_excel("logs/non-augmented/testing_accuracy_non_augmented.xlsx", index=False)
+# df = pd.read_csv("logs/non-augmented/testing_accuracy.csv")
+# # convert to xlsx
+# df.to_excel("logs/non-augmented/testing_accuracy_non_augmented.xlsx", index=False)
 
 # import helper
 
 # helper.fix_csv_combination_sort("logs/non-augmented/testing_accuracy.csv", "logs/non-augmented/testing_accuracy_fixed.csv")
+
+import helper
+
+helper.get_correlation_matrix("./logs-augmented/testing_accuracy_augmented.xlsx")
