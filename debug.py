@@ -209,6 +209,19 @@
 
 # helper.fix_csv_combination_sort("logs/non-augmented/testing_accuracy.csv", "logs/non-augmented/testing_accuracy_fixed.csv")
 
+# import helper
+
+# helper.get_correlation_matrix("./logs-augmented/testing_accuracy_augmented.xlsx")
+
 import helper
 
-helper.get_correlation_matrix("./logs-augmented/testing_accuracy_augmented.xlsx")
+helper.plot_bar_mean(
+    excel_path="./logs-augmented/testing_accuracy_augmented.xlsx",
+    x_column="batch_size",
+    y_column="average_training_time",
+    x_label="Batch Size",
+    y_label="Average Training Time (s)",
+    hue_column="model",
+    groupby_column=["model", "batch_size"],
+    plot_title="Rata-rata Waktu Training per Epoch vs Batch Size (Per Model)",
+)

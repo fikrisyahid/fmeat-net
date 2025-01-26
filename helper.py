@@ -10,6 +10,7 @@ from PIL import Image
 import numpy as np
 import itertools
 import pandas as pd
+import seaborn as sns
 
 
 def generate_log_file_name(
@@ -358,13 +359,20 @@ def fix_csv_combination_sort(csv_source_path, csv_destination_path):
             "batch_size",
             "mixed_precision_mode",
         ],
-        ascending=[True, False, True, True, True]  # Sort learning_rate in descending order
+        ascending=[
+            True,
+            False,
+            True,
+            True,
+            True,
+        ],  # Sort learning_rate in descending order
     )
 
     # Save the sorted DataFrame to a new CSV file
     df.to_csv(csv_destination_path, index=False)
 
     print("Finished sorting the CSV file.")
+
 
 def get_correlation_matrix(excel_path):
     # Load the CSV file
@@ -385,3 +393,48 @@ def get_correlation_matrix(excel_path):
     plt.show()
 
     print("Finished generating the correlation matrix.")
+
+
+def ax_add_center_labels(ax):
+    """
+    ax: axes object dari matplotlib/seaborn
+    fmt: format string untuk nilai label
+    fontcolor: warna teks label
+    """
+    for container in ax.containers:
+        ax.bar_label(
+            container,
+            fmt="%.2f",
+            color="black",
+            fontsize=10,  # atur sesuai selera
+        )
+
+
+def plot_bar_mean(
+    excel_path,
+    groupby_column,
+    y_column,
+    x_column,
+    x_label,
+    y_label,
+    hue_column,
+    plot_title,
+):
+    df = pd.read_excel(excel_path)
+
+    correlation_data = df.groupby(groupby_column)[y_column].mean().reset_index()
+
+    print(correlation_data)
+
+    plt.figure(figsize=(10, 6))
+    ax = sns.barplot(
+        data=correlation_data,
+        x=x_column,
+        y=y_column,
+        hue=hue_column,
+        errorbar=None,
+    )
+    ax.set(xlabel=x_label, ylabel=y_label)
+    plt.title(plot_title)
+    ax_add_center_labels(ax)
+    plt.show()
