@@ -8,7 +8,6 @@ import os
 import matplotlib.pyplot as plt
 from PIL import Image
 import numpy as np
-import itertools
 import pandas as pd
 import seaborn as sns
 
@@ -280,33 +279,19 @@ def visualize_augmentations(image_path):
     plt.show()
 
 
-def get_average_data_from_csv(new_column, calculated_key):
-    # Define the parameter ranges
-    model_types = ["cnn", "vgg"]
-    learning_rates = [0.01, 0.001, 0.0001]
-    dropout_rates = [0.2, 0.5, 0.8]
-    batch_sizes = [16, 32, 64]
-    mp_modes = [0, 1, 2]  # Mixed precision modes
-
-    # Generate all combinations of parameters
-    combinations = list(
-        itertools.product(
-            model_types, learning_rates, dropout_rates, batch_sizes, mp_modes
-        )
-    )
-
-    log_dir = "./logs/non-augmented"
+def get_average_data_from_csv(new_column, calculated_key, log_dir, csv_path):
+    df_source = pd.read_csv(csv_path)
 
     # Create a new DataFrame with the required columns
     rows = []
 
-    for (
-        model_type,
-        learning_rate,
-        dropout_rate,
-        batch_size,
-        mp_mode,
-    ) in combinations:
+    for _, row in df_source.iterrows():
+        model_type = row["model"]
+        learning_rate = row["learning_rate"]
+        dropout_rate = row["dropout_rate"]
+        batch_size = row["batch_size"]
+        mp_mode = row["mixed_precision_mode"]
+
         log_file_name = generate_log_file_name(
             model_type, learning_rate, dropout_rate, batch_size, mp_mode
         )
