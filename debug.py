@@ -168,8 +168,11 @@
 # animation.save("plot0.gif", writer="imagemagick", fps=10)
 # Image(url="plot0.gif")
 
-# import random
+# =============================================================================
+# Generate CSV Row
+# =============================================================================
 
+# import random
 
 # def generate_csv_row(epoch):
 #     row = [
@@ -193,6 +196,10 @@
 # for i in range(21):
 #     generate_csv_row(i)
 
+# =============================================================================
+# Generate CSV average data
+# =============================================================================
+
 # import helper
 # import pandas as pd
 
@@ -200,18 +207,33 @@
 # helper.get_average_data_from_csv(new_column="average_gpu_vram_usage", calculated_key="gpu_vram_usage")
 # helper.get_average_data_from_csv(new_column="average_training_time", calculated_key="training_time")
 
+# =============================================================================
+# Convert CSV to XLSX
+# =============================================================================
 
 # df = pd.read_csv("logs/non-augmented/testing_accuracy.csv")
 # # convert to xlsx
 # df.to_excel("logs/non-augmented/testing_accuracy_non_augmented.xlsx", index=False)
 
+# =============================================================================
+# Fix CSV combination sort
+# =============================================================================
+
 # import helper
 
 # helper.fix_csv_combination_sort("logs/non-augmented/testing_accuracy.csv", "logs/non-augmented/testing_accuracy_fixed.csv")
 
+# =============================================================================
+# Plot correlation matrix from XLSX
+# =============================================================================
+
 # import helper
 
 # helper.get_correlation_matrix("./logs-augmented/testing_accuracy_augmented.xlsx")
+
+# =============================================================================
+# Get data insight
+# =============================================================================
 
 import helper
 
@@ -220,8 +242,52 @@ helper.plot_bar_mean(
     x_column="batch_size",
     y_column="average_training_time",
     x_label="Batch Size",
-    y_label="Average Training Time (s)",
+    y_label="Rata-rata Waktu Pelatihan Model (s)",
     hue_column="model",
     groupby_column=["model", "batch_size"],
-    plot_title="Rata-rata Waktu Training per Epoch vs Batch Size (Per Model)",
+    plot_title="Rata-rata Waktu Pelatihan per Epoch vs Batch Size (Per Model)",
+)
+
+helper.plot_bar_mean(
+    excel_path="./logs-augmented/testing_accuracy_augmented.xlsx",
+    x_column="learning_rate",
+    y_column="average_training_time",
+    x_label="Learning Rate",
+    y_label="Rata-rata Waktu Pelatihan Model (s)",
+    hue_column="model",
+    groupby_column=["model", "learning_rate"],
+    plot_title="Rata-rata Waktu Pelatihan per Epoch vs Learning Rate (Per Model)",
+)
+
+helper.plot_bar_mean(
+    excel_path="./logs-augmented/testing_accuracy_augmented.xlsx",
+    x_column="mixed_precision_mode",
+    y_column="average_training_time",
+    x_label="Mode Mixed Precision",
+    y_label="Rata-rata Waktu Pelatihan Model (s)",
+    hue_column="model",
+    groupby_column=["model", "mixed_precision_mode"],
+    plot_title="Rata-rata Waktu Pelatihan per Epoch vs Mode Mixed Precision (Per Model)",
+)
+
+helper.plot_bar_mean(
+    excel_path="./logs-augmented/testing_accuracy_augmented.xlsx",
+    x_column="dropout_rate",
+    y_column="average_training_time",
+    x_label="Persentase Dropout (%)",
+    y_label="Rata-rata Waktu Pelatihan Model (s)",
+    hue_column="model",
+    groupby_column=["model", "dropout_rate"],
+    plot_title="Rata-rata Waktu Pelatihan per Epoch vs Persentase Dropout (Per Model)",
+)
+
+helper.plot_bar_mean(
+    excel_path="./logs-augmented/testing_accuracy_augmented.xlsx",
+    x_column="model",
+    y_column="average_training_time",
+    x_label="Jenis Model",
+    y_label="Rata-rata Waktu Pelatihan Model (s)",
+    hue_column="model",
+    groupby_column=["model"],
+    plot_title="Rata-rata Waktu Pelatihan Model per Epoch",
 )
