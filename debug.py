@@ -203,17 +203,35 @@
 # import helper
 # import pandas as pd
 
-# helper.get_average_data_from_csv(new_column="average_gpu_watt_usage", calculated_key="gpu_watt_usage")
-# helper.get_average_data_from_csv(new_column="average_gpu_vram_usage", calculated_key="gpu_vram_usage")
-# helper.get_average_data_from_csv(new_column="average_training_time", calculated_key="training_time")
+# helper.get_average_data_from_csv(
+#     new_column="average_gpu_watt_usage",
+#     calculated_key="gpu_watt_usage",
+#     log_dir="./logs-non-augmented-ipb",
+#     csv_path="./logs-non-augmented-ipb/testing_accuracy.csv",
+# )
+# helper.get_average_data_from_csv(
+#     new_column="average_gpu_vram_usage",
+#     calculated_key="gpu_vram_usage",
+#     log_dir="./logs-non-augmented-ipb",
+#     csv_path="./logs-non-augmented-ipb/testing_accuracy.csv",
+# )
+# helper.get_average_data_from_csv(
+#     new_column="average_training_time",
+#     calculated_key="training_time",
+#     log_dir="./logs-non-augmented-ipb",
+#     csv_path="./logs-non-augmented-ipb/testing_accuracy.csv",
+# )
 
-# =============================================================================
-# Convert CSV to XLSX
-# =============================================================================
+# # =============================================================================
+# # Convert CSV to XLSX
+# # =============================================================================
 
-# df = pd.read_csv("logs/non-augmented/testing_accuracy.csv")
+# df = pd.read_csv("logs-non-augmented-ipb/testing_accuracy.csv")
 # # convert to xlsx
-# df.to_excel("logs/non-augmented/testing_accuracy_non_augmented.xlsx", index=False)
+# df.to_excel(
+#     "logs-non-augmented-ipb/testing_accuracy_augmented.xlsx", index=False
+# )
+
 
 # =============================================================================
 # Fix CSV combination sort
@@ -236,53 +254,17 @@
 # =============================================================================
 
 import helper
+import pandas as pd
 
-helper.plot_bar_mean(
-    excel_path="./logs-augmented/testing_accuracy_augmented.xlsx",
-    x_column="batch_size",
-    y_column="average_training_time",
-    x_label="Batch Size",
-    y_label="Rata-rata Waktu Pelatihan Model (s)",
-    hue_column="model",
-    groupby_column=["model", "batch_size"],
-    plot_title="Rata-rata Waktu Pelatihan per Epoch vs Batch Size (Per Model)",
-)
+df_source = pd.read_excel("./logs-main.xlsx")
 
-helper.plot_bar_mean(
-    excel_path="./logs-augmented/testing_accuracy_augmented.xlsx",
-    x_column="learning_rate",
-    y_column="average_training_time",
-    x_label="Learning Rate",
-    y_label="Rata-rata Waktu Pelatihan Model (s)",
-    hue_column="model",
-    groupby_column=["model", "learning_rate"],
-    plot_title="Rata-rata Waktu Pelatihan per Epoch vs Learning Rate (Per Model)",
-)
+# Filter data frame to only include rows that has environment column as lokal
+df = df_source
 
-helper.plot_bar_mean(
-    excel_path="./logs-augmented/testing_accuracy_augmented.xlsx",
-    x_column="mixed_precision_mode",
-    y_column="average_training_time",
-    x_label="Mode Mixed Precision",
-    y_label="Rata-rata Waktu Pelatihan Model (s)",
-    hue_column="model",
-    groupby_column=["model", "mixed_precision_mode"],
-    plot_title="Rata-rata Waktu Pelatihan per Epoch vs Mode Mixed Precision (Per Model)",
-)
+# Apa saja yang mempengaruhi waktu training
 
+# Model vs waktu training
 helper.plot_bar_mean(
-    excel_path="./logs-augmented/testing_accuracy_augmented.xlsx",
-    x_column="dropout_rate",
-    y_column="average_training_time",
-    x_label="Persentase Dropout (%)",
-    y_label="Rata-rata Waktu Pelatihan Model (s)",
-    hue_column="model",
-    groupby_column=["model", "dropout_rate"],
-    plot_title="Rata-rata Waktu Pelatihan per Epoch vs Persentase Dropout (Per Model)",
-)
-
-helper.plot_bar_mean(
-    excel_path="./logs-augmented/testing_accuracy_augmented.xlsx",
     x_column="model",
     y_column="average_training_time",
     x_label="Jenis Model",
@@ -290,4 +272,91 @@ helper.plot_bar_mean(
     hue_column="model",
     groupby_column=["model"],
     plot_title="Rata-rata Waktu Pelatihan Model per Epoch",
+    df=df,
+)
+
+# Learning rate vs waktu training
+helper.plot_bar_mean(
+    x_column="learning_rate",
+    y_column="average_training_time",
+    x_label="Learning Rate",
+    y_label="Rata-rata Waktu Pelatihan Model (s)",
+    hue_column="model",
+    groupby_column=["model", "learning_rate"],
+    plot_title="Rata-rata Waktu Pelatihan per Epoch vs Learning Rate (Per Model)",
+    df=df,
+)
+
+# Dropout rate vs waktu training
+helper.plot_bar_mean(
+    x_column="dropout_rate",
+    y_column="average_training_time",
+    x_label="Persentase Dropout (%)",
+    y_label="Rata-rata Waktu Pelatihan Model (s)",
+    hue_column="model",
+    groupby_column=["model", "dropout_rate"],
+    plot_title="Rata-rata Waktu Pelatihan per Epoch vs Persentase Dropout (Per Model)",
+    df=df,
+)
+
+# Batch size vs waktu training
+helper.plot_bar_mean(
+    x_column="batch_size",
+    y_column="average_training_time",
+    x_label="Batch Size",
+    y_label="Rata-rata Waktu Pelatihan Model (s)",
+    hue_column="model",
+    groupby_column=["model", "batch_size"],
+    plot_title="Rata-rata Waktu Pelatihan per Epoch vs Batch Size (Per Model)",
+    df=df,
+)
+
+# Mode mixed precision vs waktu training
+helper.plot_bar_mean(
+    x_column="mixed_precision_mode",
+    y_column="average_training_time",
+    x_label="Mode Mixed Precision",
+    y_label="Rata-rata Waktu Pelatihan Model (s)",
+    hue_column="model",
+    groupby_column=["model", "mixed_precision_mode"],
+    plot_title="Rata-rata Waktu Pelatihan per Epoch vs Mode Mixed Precision (Per Model)",
+    df=df,
+)
+
+df = df_source
+
+# Perbandingan lokal dan IPB dalam waktu training
+helper.plot_bar_mean(
+    x_column="environment",
+    y_column="average_training_time",
+    x_label="Environment Pelatihan",
+    y_label="Rata-rata Waktu Pelatihan Model (s)",
+    hue_column="model",
+    groupby_column=["environment", "model"],
+    plot_title="Rata-rata Waktu Pelatihan per Epoch vs environment pelatihan",
+    df=df,
+)
+
+# Perbandingan lokal dan IPB dalam watt usage
+helper.plot_bar_mean(
+    x_column="environment",
+    y_column="average_gpu_watt_usage",
+    x_label="Environment Pelatihan",
+    y_label="Rata-rata penggunaan Watt GPU (Watt)",
+    hue_column="model",
+    groupby_column=["environment", "model"],
+    plot_title="Rata-rata penggunaan Watt GPU vs environment pelatihan",
+    df=df,
+)
+
+# Perbandingan lokal dan IPB dalam VRAM usage
+helper.plot_bar_mean(
+    x_column="environment",
+    y_column="average_gpu_vram_usage",
+    x_label="Environment Pelatihan",
+    y_label="Rata-rata penggunaan VRAM GPU (MB)",
+    hue_column="model",
+    groupby_column=["environment", "model"],
+    plot_title="Rata-rata penggunaan VRAM GPU vs environment pelatihan",
+    df=df,
 )

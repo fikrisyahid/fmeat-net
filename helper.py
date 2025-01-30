@@ -396,7 +396,6 @@ def ax_add_center_labels(ax):
 
 
 def plot_bar_mean(
-    excel_path,
     groupby_column,
     y_column,
     x_column,
@@ -404,9 +403,8 @@ def plot_bar_mean(
     y_label,
     hue_column,
     plot_title,
+    df,
 ):
-    df = pd.read_excel(excel_path)
-
     correlation_data = df.groupby(groupby_column)[y_column].mean().reset_index()
 
     print(correlation_data)
@@ -417,7 +415,6 @@ def plot_bar_mean(
         x=x_column,
         y=y_column,
         hue=hue_column,
-        errorbar=None,
     )
     ax.set(xlabel=x_label, ylabel=y_label)
     plt.title(plot_title)
