@@ -360,21 +360,19 @@ def fix_csv_combination_sort(csv_source_path, csv_destination_path):
 
 
 def get_correlation_matrix(excel_path):
-    # Load the CSV file
+    # Load the Excel file
     df = pd.read_excel(excel_path)
 
-    # Filter string column
+    # Filter hanya kolom numerik
     df = df.select_dtypes(include=["float64", "int64"])
 
-    # Get the correlation matrix
+    # Hitung korelasi
     corr = df.corr()
 
-    # Plot the correlation matrix
+    # Plot heatmap dengan nilai korelasi
     plt.figure(figsize=(10, 8))
-    plt.matshow(corr, cmap="coolwarm", fignum=1)
-    plt.colorbar()
-    plt.xticks(range(len(corr.columns)), corr.columns, rotation=45)
-    plt.yticks(range(len(corr.columns)), corr.columns)
+    sns.heatmap(corr, annot=True, fmt=".2f", cmap="coolwarm", linewidths=0.5)
+    plt.title("Correlation Matrix")
     plt.show()
 
     print("Finished generating the correlation matrix.")
