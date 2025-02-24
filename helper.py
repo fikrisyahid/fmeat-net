@@ -216,7 +216,7 @@ def visualize_augmentations(image_path):
                 v2.ToDtype(torch.float32, scale=True),
             ]
         ),
-        "Rotation": v2.Compose(
+        "Random Rotation": v2.Compose(
             [
                 v2.RandomRotation(10),
                 v2.ToImage(),
@@ -224,7 +224,7 @@ def visualize_augmentations(image_path):
                 v2.ToDtype(torch.float32, scale=True),
             ]
         ),
-        "Perspective": v2.Compose(
+        "Random Perspective": v2.Compose(
             [
                 v2.RandomPerspective(p=1.0),
                 v2.ToImage(),
@@ -240,7 +240,7 @@ def visualize_augmentations(image_path):
                 v2.ToDtype(torch.float32, scale=True),
             ]
         ),
-        "dark_red_tone": v2.Compose(
+        "Dark Red Tone": v2.Compose(
             [
                 v2.Lambda(lambda img: add_dark_red_tone(img)),
                 v2.ToImage(),
@@ -248,7 +248,7 @@ def visualize_augmentations(image_path):
                 v2.ToDtype(torch.float32, scale=True),
             ]
         ),
-        "yellow_bright_tone": v2.Compose(
+        "Yellow Bright Tone": v2.Compose(
             [
                 v2.Lambda(lambda img: add_yellow_tone(img)),
                 v2.ToImage(),
