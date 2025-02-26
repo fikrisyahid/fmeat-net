@@ -5,7 +5,7 @@
 # import helper
 
 
-# helper.visualize_augmentations("./dataset/training/sapi/s7.jpg")
+# helper.visualize_augmentations("./dataset/distributed/training/sapi/s7.jpg")
 # helper.generate_augmented_images(
 #     source_dir="./dataset/training",
 #     destination_dir="./dataset/augmented/training",
@@ -239,7 +239,10 @@
 
 # import helper
 
-# helper.fix_csv_combination_sort("logs/non-augmented/testing_accuracy.csv", "logs/non-augmented/testing_accuracy_fixed.csv")
+# helper.fix_csv_combination_sort(
+#     "logs-non-augmented-ipb/testing_accuracy.csv",
+#     "logs-non-augmented-ipb/testing_accuracy_fixed.csv",
+# )
 
 # =============================================================================
 # Plot correlation matrix from XLSX
