@@ -402,8 +402,12 @@ def plot_bar_mean(
     hue_column,
     plot_title,
     df,
+    multiply_y_column_by=1,
 ):
     correlation_data = df.groupby(groupby_column)[y_column].mean().reset_index()
+    correlation_data[y_column] = (
+        correlation_data[y_column] * multiply_y_column_by
+    )
 
     print(correlation_data)
 
@@ -413,7 +417,9 @@ def plot_bar_mean(
         x=x_column,
         y=y_column,
         hue=hue_column,
+        errorbar=None,
     )
+
     ax.set(xlabel=x_label, ylabel=y_label)
     plt.title(plot_title)
     ax_add_center_labels(ax)
