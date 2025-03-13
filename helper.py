@@ -359,7 +359,7 @@ def fix_csv_combination_sort(csv_source_path, csv_destination_path):
     print("Finished sorting the CSV file.")
 
 
-def get_correlation_matrix(excel_path):
+def get_correlation_matrix(excel_path, label_mapping=None):
     # Load the Excel file
     df = pd.read_excel(excel_path)
 
@@ -371,7 +371,23 @@ def get_correlation_matrix(excel_path):
 
     # Plot heatmap dengan nilai korelasi
     plt.figure(figsize=(10, 8))
-    sns.heatmap(corr, annot=True, fmt=".2f", cmap="coolwarm", linewidths=0.5)
+    ax = sns.heatmap(
+        corr, annot=True, fmt=".2f", cmap="coolwarm", linewidths=0.5
+    )
+
+    # Apply custom label mapping if provided
+    if label_mapping:
+        new_xticks = [
+            label_mapping.get(label.get_text(), label.get_text())
+            for label in ax.get_xticklabels()
+        ]
+        ax.set_xticklabels(new_xticks, rotation=90)
+        new_yticks = [
+            label_mapping.get(label.get_text(), label.get_text())
+            for label in ax.get_yticklabels()
+        ]
+        ax.set_yticklabels(new_yticks, rotation=0)
+
     plt.title("Correlation Matrix")
     plt.show()
 
