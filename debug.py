@@ -261,161 +261,31 @@ import pandas as pd
 
 df_source = pd.read_excel("./logs-main.xlsx")
 
-# Filter data frame to only include rows that has environment column as lokal
-df = df_source
-
-# Apa saja yang mempengaruhi waktu training
-
-# Model vs waktu training
-helper.plot_bar_mean(
-    x_column="model",
-    y_column="average_training_time",
-    x_label="Jenis Model",
-    y_label="Rata-rata Waktu Pelatihan Model (s)",
-    hue_column="model",
-    groupby_column=["model"],
-    plot_title="Rata-rata Waktu Pelatihan Model per Epoch",
-    df=df,
+# Mengatur ulang value dari kolom
+df_source["augmented"] = df_source["augmented"].map(
+    {0: "Tanpa augmentasi", 1: "Augmentasi"}
+)
+df_source["model"] = df_source["model"].map(
+    {"cnn": "CNN (Proposed)", "vgg": "VGG16"}
+)
+df_source["mixed_precision_mode"] = df_source["mixed_precision_mode"].map(
+    {0: "(FP32, FP32)", 1: "(FP16, FP32)", 2: "(FP64, FP64)"}
 )
 
-# Learning rate vs waktu training
-helper.plot_bar_mean(
-    x_column="learning_rate",
-    y_column="average_training_time",
-    x_label="Learning Rate",
-    y_label="Rata-rata Waktu Pelatihan Model (s)",
-    hue_column="model",
-    groupby_column=["model", "learning_rate"],
-    plot_title="Rata-rata Waktu Pelatihan per Epoch vs Learning Rate (Per Model)",
-    df=df,
-)
+print(df_source.head())
 
-# Dropout rate vs waktu training
-helper.plot_bar_mean(
-    x_column="dropout_rate",
-    y_column="average_training_time",
-    x_label="Persentase Dropout (%)",
-    y_label="Rata-rata Waktu Pelatihan Model (s)",
-    hue_column="model",
-    groupby_column=["model", "dropout_rate"],
-    plot_title="Rata-rata Waktu Pelatihan per Epoch vs Persentase Dropout (Per Model)",
-    df=df,
-)
+# df = df_source
+df = df_source[df_source["test_accuracy"] != -1]
 
-# Batch size vs waktu training
 helper.plot_bar_mean(
     x_column="batch_size",
-    y_column="average_training_time",
-    x_label="Batch Size",
-    y_label="Rata-rata Waktu Pelatihan Model (s)",
-    hue_column="model",
-    groupby_column=["model", "batch_size"],
-    plot_title="Rata-rata Waktu Pelatihan per Epoch vs Batch Size (Per Model)",
-    df=df,
-)
-
-# Mode mixed precision vs waktu training
-helper.plot_bar_mean(
-    x_column="mixed_precision_mode",
-    y_column="average_training_time",
-    x_label="Mode Mixed Precision",
-    y_label="Rata-rata Waktu Pelatihan Model (s)",
-    hue_column="model",
-    groupby_column=["model", "mixed_precision_mode"],
-    plot_title="Rata-rata Waktu Pelatihan per Epoch vs Mode Mixed Precision (Per Model)",
-    df=df,
-)
-
-df = df_source
-
-# Perbandingan lokal dan IPB dalam waktu training
-helper.plot_bar_mean(
-    x_column="environment",
-    y_column="average_training_time",
-    x_label="Environment Pelatihan",
-    y_label="Rata-rata Waktu Pelatihan Model (s)",
-    hue_column="model",
-    groupby_column=["environment", "model"],
-    plot_title="Rata-rata Waktu Pelatihan per Epoch vs environment pelatihan",
-    df=df,
-)
-
-# Perbandingan lokal dan IPB dalam watt usage
-helper.plot_bar_mean(
-    x_column="environment",
-    y_column="average_gpu_watt_usage",
-    x_label="Environment Pelatihan",
-    y_label="Rata-rata penggunaan Watt GPU (Watt)",
-    hue_column="model",
-    groupby_column=["environment", "model"],
-    plot_title="Rata-rata penggunaan Watt GPU vs environment pelatihan",
-    df=df,
-)
-
-# Perbandingan lokal dan IPB dalam VRAM usage
-helper.plot_bar_mean(
-    x_column="environment",
-    y_column="average_gpu_vram_usage",
-    x_label="Environment Pelatihan",
-    y_label="Rata-rata penggunaan VRAM GPU (MB)",
-    hue_column="model",
-    groupby_column=["environment", "model"],
-    plot_title="Rata-rata penggunaan VRAM GPU vs environment pelatihan",
-    df=df,
-)
-
-df = df_source[df_source["test_accuracy"] != -1]
-
-# Perbandingan lokal dan IPB dalam akurasi testing
-helper.plot_bar_mean(
-    x_column="environment",
     y_column="test_accuracy",
-    x_label="Environment Pelatihan",
-    y_label="Akurasi Testing (%)",
+    x_label="Ukuran Batch Size",
+    y_label="Rata-rata akurasi pengujian (%)",
     hue_column="model",
-    groupby_column=["environment", "model"],
-    plot_title="Rata-rata akurasi testing vs environment pelatihan",
+    groupby_column=["batch_size", "model"],
+    plot_title="Rata-rata akurasi pengujian pada ukuran batch size berbeda",
     df=df,
+    multiply_y_column_by=100,
 )
 
-df = df_source
-
-# Perbandingan augmentasi dan non-augmentasi dalam waktu training
-helper.plot_bar_mean(
-    x_column="augmented",
-    y_column="average_training_time",
-    x_label="Konfigurasi Augmentasi",
-    y_label="Rata-rata Waktu Pelatihan Model (s)",
-    hue_column="model",
-    groupby_column=["augmented", "model"],
-    plot_title="Rata-rata waktu pelatihan model vs konfigurasi augmentasi",
-    df=df,
-)
-
-df = df_source[df_source["test_accuracy"] != -1]
-
-# Perbandingan augmentasi dan non-augmentasi dalam akurasi testing
-helper.plot_bar_mean(
-    x_column="augmented",
-    y_column="test_accuracy",
-    x_label="Konfigurasi Augmentasi",
-    y_label="Rata-rata akurasi testing (%)",
-    hue_column="model",
-    groupby_column=["augmented", "model"],
-    plot_title="Rata-rata akurasi testing model vs konfigurasi augmentasi",
-    df=df,
-)
-
-# Perbandingan mixed precision dalam akurasi testing
-helper.plot_bar_mean(
-    x_column="mixed_precision_mode",
-    y_column="test_accuracy",
-    x_label="Mode Mixed Precision",
-    y_label="Rata-rata akurasi testing (%)",
-    hue_column="model",
-    groupby_column=["mixed_precision_mode", "model"],
-    plot_title="Rata-rata akurasi testing model vs mode mixed precision",
-    df=df,
-)
-
-helper.get_correlation_matrix("./logs-main.xlsx")
