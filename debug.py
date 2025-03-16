@@ -232,6 +232,36 @@
 #     "logs-non-augmented-ipb/testing_accuracy_augmented.xlsx", index=False
 # )
 
+# =============================================================================
+# Convert XLSX to CSV
+# =============================================================================
+
+# import pandas as pd
+
+# def excel_to_csv(excel_file_path, csv_file_path, index=False):
+#     """
+#     Convert an Excel file to CSV format
+    
+#     Parameters:
+#     -----------
+#     excel_file_path : str
+#         Path to the Excel file
+#     csv_file_path : str
+#         Path where the CSV file will be saved
+#     index : bool, default=False
+#         Whether to include the index column in the CSV
+#     """
+#     # Read Excel file
+#     df = pd.read_excel(excel_file_path)
+    
+#     # Save as CSV file
+#     df.to_csv(csv_file_path, index=index)
+    
+#     print(f"Excel file '{excel_file_path}' successfully converted to CSV: '{csv_file_path}'")
+
+# # Convert logs-main.xlsx to logs-main.csv
+# excel_to_csv("./logs-main.xlsx", "./logs-main.csv")
+
 
 # =============================================================================
 # Fix CSV combination sort
