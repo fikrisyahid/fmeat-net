@@ -241,7 +241,7 @@
 # def excel_to_csv(excel_file_path, csv_file_path, index=False):
 #     """
 #     Convert an Excel file to CSV format
-    
+
 #     Parameters:
 #     -----------
 #     excel_file_path : str
@@ -253,10 +253,10 @@
 #     """
 #     # Read Excel file
 #     df = pd.read_excel(excel_file_path)
-    
+
 #     # Save as CSV file
 #     df.to_csv(csv_file_path, index=index)
-    
+
 #     print(f"Excel file '{excel_file_path}' successfully converted to CSV: '{csv_file_path}'")
 
 # # Convert logs-main.xlsx to logs-main.csv
@@ -286,36 +286,88 @@
 # Get data insight
 # =============================================================================
 
-import helper
+# import helper
+# import pandas as pd
+
+# df_source = pd.read_excel("./logs-main.xlsx")
+
+# # Mengatur ulang value dari kolom
+# df_source["augmented"] = df_source["augmented"].map(
+#     {0: "Tanpa augmentasi", 1: "Augmentasi"}
+# )
+# df_source["model"] = df_source["model"].map(
+#     {"cnn": "CNN (Proposed)", "vgg": "VGG16"}
+# )
+# df_source["mixed_precision_mode"] = df_source["mixed_precision_mode"].map(
+#     {0: "(FP32, FP32)", 1: "(FP16, FP32)", 2: "(FP64, FP64)"}
+# )
+
+# print(df_source.head())
+
+# # df = df_source
+# df = df_source[df_source["test_accuracy"] != -1]
+
+# helper.plot_bar_mean(
+#     x_column="batch_size",
+#     y_column="test_accuracy",
+#     x_label="Ukuran Batch Size",
+#     y_label="Rata-rata akurasi pengujian (%)",
+#     hue_column="model",
+#     groupby_column=["batch_size", "model"],
+#     plot_title="Rata-rata akurasi pengujian pada ukuran batch size berbeda",
+#     df=df,
+#     multiply_y_column_by=100,
+# )
+
+# =============================================================================
+# Best model chart
+# =============================================================================
+
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
 
-df_source = pd.read_excel("./logs-main.xlsx")
+# Step 1: Load the data
+data = pd.read_csv("./logs-augmented-ipb/cnn_lr0.001_dr0.8_bs32_mp0.csv")
 
-# Mengatur ulang value dari kolom
-df_source["augmented"] = df_source["augmented"].map(
-    {0: "Tanpa augmentasi", 1: "Augmentasi"}
-)
-df_source["model"] = df_source["model"].map(
-    {"cnn": "CNN (Proposed)", "vgg": "VGG16"}
-)
-df_source["mixed_precision_mode"] = df_source["mixed_precision_mode"].map(
-    {0: "(FP32, FP32)", 1: "(FP16, FP32)", 2: "(FP64, FP64)"}
-)
+# Step 2: Filter the data to include only 'training_accuracy' and 'validation_accuracy'
+# filtered_data = data[["epoch", "training_accuracy", "validation_accuracy"]]
+filtered_data = data[["epoch", "training_accuracy", "validation_accuracy"]]
 
-print(df_source.head())
-
-# df = df_source
-df = df_source[df_source["test_accuracy"] != -1]
-
-helper.plot_bar_mean(
-    x_column="batch_size",
-    y_column="test_accuracy",
-    x_label="Ukuran Batch Size",
-    y_label="Rata-rata akurasi pengujian (%)",
-    hue_column="model",
-    groupby_column=["batch_size", "model"],
-    plot_title="Rata-rata akurasi pengujian pada ukuran batch size berbeda",
-    df=df,
-    multiply_y_column_by=100,
+# Step 3: Reshape the filtered data from wide to long format
+long_data = pd.melt(
+    filtered_data, id_vars=["epoch"], var_name="metric", value_name="value"
 )
 
+long_data["metric"] = long_data["metric"].map(
+    {
+        "training_accuracy": "Akurasi pelatihan",
+        "validation_accuracy": "Akurasi validasi",
+    }
+)
+
+# Step 4: Plot the data using Seaborn
+plt.figure(figsize=(10, 6))  # Set the figure size for better visibility
+sns.lineplot(
+    data=long_data, x="epoch", y="value", hue="metric", palette="tab10"
+)
+
+# Step 5: Customize the plot
+plt.title("Akurasi pelatihan dan validasi per-epoch", fontsize=16)
+plt.xlabel("Epoch", fontsize=14)
+plt.ylabel("Akurasi", fontsize=14)
+plt.legend(title="Jenis akurasi", loc="best")  # Place legend inside the plot
+plt.grid(True)  # Add gridlines for better readability
+plt.tight_layout()  # Adjust layout to prevent overlap
+
+# Set x-ticks to only show integer values
+max_epoch = int(filtered_data["epoch"].max())
+plt.xticks(
+    np.arange(1, max_epoch + 1, 1)
+)  # Only integer values from 0 to max epoch
+
+plt.tight_layout()  # Adjust layout to prevent overlap
+
+# Show the plot
+plt.show()
