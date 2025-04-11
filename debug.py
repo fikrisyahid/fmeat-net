@@ -229,13 +229,13 @@
 # import pandas as pd
 
 # # df = pd.read_csv("logs-non-augmented-ipb/testing_accuracy.csv")
-# df = pd.read_csv("./logs-augmented-ipb/cnn_lr0.001_dr0.8_bs32_mp2.csv")
+# df = pd.read_csv("./logs-augmented-ipb/cnn_lr0.001_dr0.8_bs32_mp0.csv")
 # # convert to xlsx
 # # df.to_excel(
 # #     "logs-non-augmented-ipb/testing_accuracy_augmented.xlsx", index=False
 # # )
 # df.to_excel(
-#     "best_model_per_epoch_2.xlsx", index=False
+#     "logs_second_best_model_per_epoch.xlsx", index=False
 # )
 
 # =============================================================================
@@ -335,14 +335,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Step 1: Load the data
-# data = pd.read_csv("./logs-augmented-ipb/cnn_lr0.001_dr0.8_bs32_mp0.csv")
-data = pd.read_excel("./logs_best_model.xlsx", sheet_name="mp_time_analysis")
+data = pd.read_excel("./logs_best_model_per_epoch.xlsx")
 
 # Step 2: Filter the data to include only 'training_accuracy' and 'validation_accuracy'
-# filtered_data = data[["epoch", "training_accuracy", "validation_accuracy"]]
-filtered_data = data[
-    ["epoch", "training_time", "training_time_1", "training_time_2"]
-]
+# filtered_data = data[["epoch", "training_accuracy", "validation_accuracy", "training_accuracy_2", "validation_accuracy_2"]]
+filtered_data = data[["epoch", "training_time", "training_time_2"]]
 
 # Step 3: Reshape the filtered data from wide to long format
 long_data = pd.melt(
@@ -351,15 +348,16 @@ long_data = pd.melt(
 
 # long_data["metric"] = long_data["metric"].map(
 #     {
-#         "training_accuracy": "Akurasi pelatihan",
-#         "validation_accuracy": "Akurasi validasi",
+#         "training_accuracy": "Akurasi pelatihan konfigurasi A",
+#         "training_accuracy_2": "Akurasi pelatihan konfigurasi B",
+#         "validation_accuracy": "Akurasi validasi konfigurasi A",
+#         "validation_accuracy_2": "Akurasi validasi konfigurasi B",
 #     }
 # )
 long_data["metric"] = long_data["metric"].map(
     {
-        "training_time": "Mixed Precision FP32-FP32",
-        "training_time_1": "Mixed Precision FP16-FP32",
-        "training_time_2": "Mixed Precision FP64-FP64",
+        "training_time": "Waktu pelatihan konfigurasi A",
+        "training_time_2": "Waktu pelatihan konfigurasi B",
     }
 )
 
@@ -370,13 +368,23 @@ sns.lineplot(
 )
 
 # Step 5: Customize the plot
+# plt.title(
+#     "Akurasi pelatihan dan validasi per-epoch",
+#     fontsize=16,
+# )
 plt.title(
-    "Perbandingan waktu pelatihan per-epoch pada konfigurasi mixed precision training berbeda",
+    "Waktu pelatihan per-epoch",
     fontsize=16,
 )
+
 plt.xlabel("Epoch", fontsize=14)
-plt.ylabel("Waktu pelatiahn (detik)", fontsize=14)
-plt.legend(title="Konfigurasi mixed precision training", loc="best")  # Place legend inside the plot
+
+# plt.ylabel("Akurasi (%)", fontsize=14)
+plt.ylabel("Waktu pelatihan (detik)", fontsize=14)
+
+# plt.legend(title="Jenis akurasi", loc="best")  # Place legend inside the plot
+plt.legend(title="Jenis waktu pelatihan", loc="best")  # Place legend inside the plot
+
 plt.grid(True)  # Add gridlines for better readability
 plt.tight_layout()  # Adjust layout to prevent overlap
 
