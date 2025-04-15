@@ -369,11 +369,11 @@ sns.lineplot(
 
 # Step 5: Customize the plot
 # plt.title(
-#     "Akurasi pelatihan dan validasi per-epoch",
+#     "Perbandingan akurasi pelatihan dan validasi per-epoch",
 #     fontsize=16,
 # )
 plt.title(
-    "Waktu pelatihan per-epoch",
+    "Perbandingan waktu pelatihan per-epoch",
     fontsize=16,
 )
 
