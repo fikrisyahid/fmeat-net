@@ -292,38 +292,47 @@
 # Get data insight
 # =============================================================================
 
-# import helper
-# import pandas as pd
+import helper
+import pandas as pd
 
-# df_source = pd.read_excel("./logs-main.xlsx")
+df_source = pd.read_excel("./logs-main.xlsx")
 
-# # Mengatur ulang value dari kolom
-# df_source["augmented"] = df_source["augmented"].map(
-#     {0: "Tanpa augmentasi", 1: "Augmentasi"}
-# )
-# df_source["model"] = df_source["model"].map(
-#     {"cnn": "CNN (Proposed)", "vgg": "VGG16"}
-# )
-# df_source["mixed_precision_mode"] = df_source["mixed_precision_mode"].map(
-#     {0: "(FP32, FP32)", 1: "(FP16, FP32)", 2: "(FP64, FP64)"}
-# )
+# Mengatur ulang value dari kolom
+df_source["augmented"] = df_source["augmented"].map(
+    {0: "Tanpa augmentasi", 1: "Augmentasi"}
+)
+df_source["model"] = df_source["model"].map(
+    {"cnn": "FMEAT-Net", "vgg": "VGG16"}
+)
+df_source["mixed_precision_mode"] = df_source["mixed_precision_mode"].map(
+    {0: "(FP32, FP32)", 1: "(FP16, FP32)", 2: "(FP64, FP64)"}
+)
 
-# print(df_source.head())
+print(df_source.head())
 
-# # df = df_source
+df = df_source
 # df = df_source[df_source["test_accuracy"] != -1]
 
-# helper.plot_bar_mean(
-#     x_column="batch_size",
-#     y_column="test_accuracy",
-#     x_label="Ukuran Batch Size",
-#     y_label="Rata-rata akurasi pengujian (%)",
-#     hue_column="model",
-#     groupby_column=["batch_size", "model"],
-#     plot_title="Rata-rata akurasi pengujian pada ukuran batch size berbeda",
-#     df=df,
-#     multiply_y_column_by=100,
-# )
+helper.plot_bar_mean(
+    x_column="batch_size",
+    # y_column="test_accuracy",
+    # y_column="average_training_time",
+    # y_column="average_gpu_watt_usage",
+    y_column="average_gpu_vram_usage",
+    x_label="Ukuran Batch Size",
+    # y_label="Rata-rata akurasi pengujian (%)",
+    # y_label="Rata-rata waktu pelatihan per-epoch (detik)",
+    # y_label="Rata-rata penggunaan daya GPU (Watt)",
+    y_label="Rata-rata penggunaan VRAM GPU (MB)",
+    hue_column="model",
+    groupby_column=["batch_size", "model"],
+    # plot_title="Rata-rata akurasi pengujian pada arsitektur CNN berbeda",
+    # plot_title="Rata-rata waktu pelatihan per epoch pada arsitektur CNN size berbeda",
+    # plot_title="Rata-rata penggunaan daya GPU pada konfigurasi augmentasi berbeda",
+    plot_title="Rata-rata penggunaan VRAM GPU pada ukuran batch size berbeda",
+    df=df,
+    # multiply_y_column_by=100,
+)
 
 # =============================================================================
 # Best model chart
@@ -402,24 +411,24 @@
 # =============================================================================
 # Model summary
 # =============================================================================
-from torchsummary import summary
-from models import CNNModel, VGGModel
+# from torchsummary import summary
+# from models import CNNModel, VGGModel
 
-summary(
-    model=CNNModel(),
-    input_size=(
-        3,
-        112,
-        112,
-    ),
-)
+# summary(
+#     model=CNNModel(),
+#     input_size=(
+#         3,
+#         112,
+#         112,
+#     ),
+# )
 
-summary(
-    model=VGGModel(),
-    input_size=(
-        3,
-        112,
-        112,
-    ),
-)
+# summary(
+#     model=VGGModel(),
+#     input_size=(
+#         3,
+#         112,
+#         112,
+#     ),
+# )
 # =============================================================================
