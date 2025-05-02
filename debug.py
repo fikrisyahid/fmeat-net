@@ -292,121 +292,136 @@
 # Get data insight
 # =============================================================================
 
-import helper
-import pandas as pd
+# import helper
+# import pandas as pd
 
-df_source = pd.read_excel("./logs-main.xlsx")
+# df_source = pd.read_excel("./logs-main.xlsx")
 
-# Mengatur ulang value dari kolom
-df_source["augmented"] = df_source["augmented"].map(
-    {0: "Tanpa augmentasi", 1: "Augmentasi"}
-)
-df_source["model"] = df_source["model"].map(
-    {"cnn": "FMEAT-Net", "vgg": "VGG16"}
-)
-df_source["mixed_precision_mode"] = df_source["mixed_precision_mode"].map(
-    {0: "(FP32, FP32)", 1: "(FP16, FP32)", 2: "(FP64, FP64)"}
-)
+# # Mengatur ulang value dari kolom
+# df_source["augmented"] = df_source["augmented"].map(
+#     {0: "Tanpa augmentasi", 1: "Augmentasi"}
+# )
+# df_source["model"] = df_source["model"].map(
+#     {"cnn": "FMEAT-Net", "vgg": "VGG16"}
+# )
+# df_source["mixed_precision_mode"] = df_source["mixed_precision_mode"].map(
+#     {0: "(FP32, FP32)", 1: "(FP16, FP32)", 2: "(FP64, FP64)"}
+# )
 
-print(df_source.head())
+# print(df_source.head())
 
-df = df_source
-# df = df_source[df_source["test_accuracy"] != -1]
+# df = df_source
+# # df = df_source[df_source["test_accuracy"] != -1]
 
-helper.plot_bar_mean(
-    x_column="batch_size",
-    # y_column="test_accuracy",
-    # y_column="average_training_time",
-    # y_column="average_gpu_watt_usage",
-    y_column="average_gpu_vram_usage",
-    x_label="Ukuran Batch Size",
-    # y_label="Rata-rata akurasi pengujian (%)",
-    # y_label="Rata-rata waktu pelatihan per-epoch (detik)",
-    # y_label="Rata-rata penggunaan daya GPU (Watt)",
-    y_label="Rata-rata penggunaan VRAM GPU (MB)",
-    hue_column="model",
-    groupby_column=["batch_size", "model"],
-    # plot_title="Rata-rata akurasi pengujian pada arsitektur CNN berbeda",
-    # plot_title="Rata-rata waktu pelatihan per epoch pada arsitektur CNN size berbeda",
-    # plot_title="Rata-rata penggunaan daya GPU pada konfigurasi augmentasi berbeda",
-    plot_title="Rata-rata penggunaan VRAM GPU pada ukuran batch size berbeda",
-    df=df,
-    # multiply_y_column_by=100,
-)
+# helper.plot_bar_mean(
+#     x_column="batch_size",
+#     # y_column="test_accuracy",
+#     # y_column="average_training_time",
+#     # y_column="average_gpu_watt_usage",
+#     y_column="average_gpu_vram_usage",
+#     x_label="Ukuran Batch Size",
+#     # y_label="Rata-rata akurasi pengujian (%)",
+#     # y_label="Rata-rata waktu pelatihan per-epoch (detik)",
+#     # y_label="Rata-rata penggunaan daya GPU (Watt)",
+#     y_label="Rata-rata penggunaan VRAM GPU (MB)",
+#     hue_column="model",
+#     groupby_column=["batch_size", "model"],
+#     # plot_title="Rata-rata akurasi pengujian pada arsitektur CNN berbeda",
+#     # plot_title="Rata-rata waktu pelatihan per epoch pada arsitektur CNN size berbeda",
+#     # plot_title="Rata-rata penggunaan daya GPU pada konfigurasi augmentasi berbeda",
+#     plot_title="Rata-rata penggunaan VRAM GPU pada ukuran batch size berbeda",
+#     df=df,
+#     # multiply_y_column_by=100,
+# )
 
 # =============================================================================
 # Best model chart
 # =============================================================================
 
-# import pandas as pd
-# import seaborn as sns
-# import matplotlib.pyplot as plt
-# import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
 
-# # Step 1: Load the data
-# data = pd.read_excel("./logs_best_model_per_epoch.xlsx")
+# Step 1: Load the data
+data = pd.read_excel("./logs_best_model_per_epoch.xlsx")
 
-# # Step 2: Filter the data to include only 'training_accuracy' and 'validation_accuracy'
-# # filtered_data = data[["epoch", "training_accuracy", "validation_accuracy", "training_accuracy_2", "validation_accuracy_2"]]
+# Step 2: Filter the data to include only 'training_accuracy' and 'validation_accuracy'
+filtered_data = data[
+    [
+        "epoch",
+        "training_accuracy",
+        "validation_accuracy",
+        "training_accuracy_2",
+        "validation_accuracy_2",
+    ]
+]
+for col in [
+    "training_accuracy",
+    "validation_accuracy",
+    "training_accuracy_2",
+    "validation_accuracy_2",
+]:
+    filtered_data[col] = filtered_data[col] * 100
 # filtered_data = data[["epoch", "training_time", "training_time_2"]]
 
-# # Step 3: Reshape the filtered data from wide to long format
-# long_data = pd.melt(
-#     filtered_data, id_vars=["epoch"], var_name="metric", value_name="value"
-# )
+# Step 3: Reshape the filtered data from wide to long format
+long_data = pd.melt(
+    filtered_data, id_vars=["epoch"], var_name="metric", value_name="value"
+)
 
-# # long_data["metric"] = long_data["metric"].map(
-# #     {
-# #         "training_accuracy": "Akurasi pelatihan konfigurasi A",
-# #         "training_accuracy_2": "Akurasi pelatihan konfigurasi B",
-# #         "validation_accuracy": "Akurasi validasi konfigurasi A",
-# #         "validation_accuracy_2": "Akurasi validasi konfigurasi B",
-# #     }
-# # )
+long_data["metric"] = long_data["metric"].map(
+    {
+        "training_accuracy": "Akurasi pelatihan konfigurasi A",
+        "training_accuracy_2": "Akurasi pelatihan konfigurasi B",
+        "validation_accuracy": "Akurasi validasi konfigurasi A",
+        "validation_accuracy_2": "Akurasi validasi konfigurasi B",
+    }
+)
 # long_data["metric"] = long_data["metric"].map(
 #     {
-#         "training_time": "Waktu pelatihan konfigurasi A",
-#         "training_time_2": "Waktu pelatihan konfigurasi B",
+#         "training_time": "Configuration A's training time",
+#         "training_time_2": "Configuration B's training time",
 #     }
 # )
 
-# # Step 4: Plot the data using Seaborn
-# plt.figure(figsize=(10, 6))  # Set the figure size for better visibility
-# sns.lineplot(
-#     data=long_data, x="epoch", y="value", hue="metric", palette="tab10"
-# )
+# Step 4: Plot the data using Seaborn
+plt.figure(figsize=(10, 6))  # Set the figure size for better visibility
+sns.lineplot(
+    data=long_data, x="epoch", y="value", hue="metric", palette="tab10"
+)
 
-# # Step 5: Customize the plot
-# # plt.title(
-# #     "Perbandingan akurasi pelatihan dan validasi per-epoch",
-# #     fontsize=16,
-# # )
+# Step 5: Customize the plot
+plt.title(
+    "Perbandingan akurasi pelatihan dan validasi dari per-epoch",
+    fontsize=16,
+)
 # plt.title(
-#     "Perbandingan waktu pelatihan per-epoch",
+#     "Per-epoch training time comparison",
 #     fontsize=16,
 # )
 
-# plt.xlabel("Epoch", fontsize=14)
+plt.xlabel("Epoch", fontsize=14)
 
-# # plt.ylabel("Akurasi (%)", fontsize=14)
-# plt.ylabel("Waktu pelatihan (detik)", fontsize=14)
+plt.ylabel("Akurasi (%)", fontsize=14)
+# plt.ylabel("Training time (second)", fontsize=14)
 
-# # plt.legend(title="Jenis akurasi", loc="best")  # Place legend inside the plot
-# plt.legend(title="Jenis waktu pelatihan", loc="best")  # Place legend inside the plot
+plt.legend(title="Jenis akurasi", loc="best")  # Place legend inside the plot
+# plt.legend(title="Training time type", loc="best")  # Place legend inside the plot
 
-# plt.grid(True)  # Add gridlines for better readability
-# plt.tight_layout()  # Adjust layout to prevent overlap
+plt.grid(True)  # Add gridlines for better readability
+plt.tight_layout()  # Adjust layout to prevent overlap
 
-# # Set x-ticks to only show integer values
-# max_epoch = int(filtered_data["epoch"].max())
-# plt.xticks(
-#     np.arange(1, max_epoch + 1, 1)
-# )  # Only integer values from 0 to max epoch
+# Set x-ticks to only show integer values
+max_epoch = int(filtered_data["epoch"].max())
+plt.xticks(
+    np.arange(1, max_epoch + 1, 1)
+)  # Only integer values from 0 to max epoch
 
-# plt.tight_layout()  # Adjust layout to prevent overlap
+plt.tight_layout()  # Adjust layout to prevent overlap
 
-# # Show the plot
-# plt.show()
+# Show the plot
+plt.show()
 
 # =============================================================================
 # Model summary
