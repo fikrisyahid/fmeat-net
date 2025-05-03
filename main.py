@@ -3,30 +3,30 @@ from train import train
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Script untuk menjalankan model dengan konfigurasi tertentu."
+        description="Script to run the model with specific configurations."
     )
     parser.add_argument(
         "model_type",
         type=lambda x: (str(x).lower()),
-        help="Tipe model yang akan digunakan: CNN atau VGG16",
+        help="Type of model to use: CNN or VGG16",
     )
     parser.add_argument(
         "learning_rate",
         type=float,
-        help="Learning rate untuk pelatihan model",
+        help="Learning rate for model training",
     )
     parser.add_argument(
         "dropout_rate",
         type=float,
-        help="Dropout rate untuk pelatihan model",
+        help="Dropout rate for model training",
     )
     parser.add_argument(
         "batch_size",
         type=int,
-        help="Ukuran batch untuk pelatihan model",
+        help="Batch size for model training",
     )
     parser.add_argument(
-        "mp_mode", type=int, help="Mode Mixed Precision: 0, 1, atau 2"
+        "mp_mode", type=int, help="Mixed Precision Mode: 0, 1, or 2"
     )
 
     args = parser.parse_args()
