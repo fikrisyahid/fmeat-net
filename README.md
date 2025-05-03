@@ -12,6 +12,9 @@
 ## Description
 This repository contains the code and resources for the paper `FMEAT-Net: An Efficient CNN Architecture for Image-Based Identification of Beef, Pork, and Adulterated Meat`.
 
+![fmeat-net architecture](https://github.com/user-attachments/assets/9b58cabf-bee0-44ab-adc3-f12946b07850)
+FMEAT-Net architecture visualization
+
 ## Prerequisites
 You need to have the following libraries installed:
 - PyTorch: `torch torchvision torchaudio`
