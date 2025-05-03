@@ -1,7 +1,5 @@
 # FMEAT-Net: An Efficient CNN Architecture for Image-Based Identification of Beef, Pork, and Adulterated Meat
 
----
-
 ## Table of contents
 - [Description](#description)
 - [Prerequisites](#prerequisites)
