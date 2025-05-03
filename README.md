@@ -26,7 +26,7 @@ You need to have the following libraries installed:
 - scikit-learn: `scikit-learn`
 - flask: `flask`
 
-> We used `Python 3.12.9` and we recommend you to use the same version, since at the time of writing this README, `Python >= 3.12` is still buggy.
+> We used `Python 3.12.9` and we recommend you to use the same version, since at the time of writing this README, `Python > 3.12` is still buggy.
 
 ## Steps to run the code
 1. Clone the repository: `git clone https://github.com/fikrisyahid/fmeat-net.git`
