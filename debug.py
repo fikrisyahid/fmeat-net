@@ -340,9 +340,9 @@
 
 import pandas as pd
 import seaborn as sns
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-import matplotlib
 
 # Increase matplotlib DPI
 matplotlib.rcParams["figure.dpi"] = 200
