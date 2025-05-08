@@ -342,6 +342,10 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib
+
+# Increase matplotlib DPI
+matplotlib.rcParams["figure.dpi"] = 200
 
 # Step 1: Load the data
 data = pd.read_excel("./logs_best_model_per_epoch.xlsx")
