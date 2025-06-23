@@ -431,9 +431,10 @@
 # =============================================================================
 from torchsummary import summary
 from models import CNNModel, VGGModel
+import torch
 
 summary(
-    model=CNNModel(),
+    model=CNNModel().to(torch.device("cuda" if torch.cuda.is_available() else "cpu")),
     input_size=(
         3,
         112,
@@ -442,11 +443,11 @@ summary(
 )
 
 summary(
-    model=VGGModel(),
+    model=VGGModel().to(torch.device("cuda" if torch.cuda.is_available() else "cpu")),
     input_size=(
         3,
-        112,
-        112,
+        224,
+        224,
     ),
 )
 # =============================================================================
