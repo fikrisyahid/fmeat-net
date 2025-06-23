@@ -338,116 +338,115 @@
 # Best model chart
 # =============================================================================
 
-import pandas as pd
-import seaborn as sns
-import matplotlib
-import matplotlib.pyplot as plt
-import numpy as np
+# import pandas as pd
+# import seaborn as sns
+# import matplotlib.pyplot as plt
+# import numpy as np
 
-# Increase matplotlib DPI
-matplotlib.rcParams["figure.dpi"] = 200
+# # Increase matplotlib DPI
+# # plt.rcParams["figure.dpi"] = 200
 
-# Step 1: Load the data
-data = pd.read_excel("./logs_best_model_per_epoch.xlsx")
+# # Step 1: Load the data
+# data = pd.read_excel("./logs_best_model_per_epoch.xlsx")
 
-# Step 2: Filter the data to include only 'training_accuracy' and 'validation_accuracy'
-filtered_data = data[
-    [
-        "epoch",
-        "training_accuracy",
-        "validation_accuracy",
-        "training_accuracy_2",
-        "validation_accuracy_2",
-    ]
-]
-for col in [
-    "training_accuracy",
-    "validation_accuracy",
-    "training_accuracy_2",
-    "validation_accuracy_2",
-]:
-    filtered_data[col] = filtered_data[col] * 100
-# filtered_data = data[["epoch", "training_time", "training_time_2"]]
+# # Step 2: Filter the data to include only 'training_accuracy' and 'validation_accuracy'
+# filtered_data = data[
+#     [
+#         "epoch",
+#         "training_accuracy",
+#         "validation_accuracy",
+#         "training_accuracy_2",
+#         "validation_accuracy_2",
+#     ]
+# ]
+# for col in [
+#     "training_accuracy",
+#     "validation_accuracy",
+#     "training_accuracy_2",
+#     "validation_accuracy_2",
+# ]:
+#     filtered_data[col] = filtered_data[col] * 100
+# # filtered_data = data[["epoch", "training_time", "training_time_2"]]
 
-# Step 3: Reshape the filtered data from wide to long format
-long_data = pd.melt(
-    filtered_data, id_vars=["epoch"], var_name="metric", value_name="value"
-)
+# # Step 3: Reshape the filtered data from wide to long format
+# long_data = pd.melt(
+#     filtered_data, id_vars=["epoch"], var_name="metric", value_name="value"
+# )
 
-long_data["metric"] = long_data["metric"].map(
-    {
-        "training_accuracy": "Akurasi pelatihan konfigurasi A",
-        "training_accuracy_2": "Akurasi pelatihan konfigurasi B",
-        "validation_accuracy": "Akurasi validasi konfigurasi A",
-        "validation_accuracy_2": "Akurasi validasi konfigurasi B",
-    }
-)
 # long_data["metric"] = long_data["metric"].map(
 #     {
-#         "training_time": "Configuration A's training time",
-#         "training_time_2": "Configuration B's training time",
+#         "training_accuracy": "Akurasi pelatihan konfigurasi A",
+#         "training_accuracy_2": "Akurasi pelatihan konfigurasi B",
+#         "validation_accuracy": "Akurasi validasi konfigurasi A",
+#         "validation_accuracy_2": "Akurasi validasi konfigurasi B",
 #     }
 # )
+# # long_data["metric"] = long_data["metric"].map(
+# #     {
+# #         "training_time": "Configuration A's training time",
+# #         "training_time_2": "Configuration B's training time",
+# #     }
+# # )
 
-# Step 4: Plot the data using Seaborn
-plt.figure(figsize=(10, 6))  # Set the figure size for better visibility
-sns.lineplot(
-    data=long_data, x="epoch", y="value", hue="metric", palette="tab10"
-)
-
-# Step 5: Customize the plot
-plt.title(
-    "Perbandingan akurasi pelatihan dan validasi dari per-epoch",
-    fontsize=16,
-)
-# plt.title(
-#     "Per-epoch training time comparison",
-#     fontsize=16,
+# # Step 4: Plot the data using Seaborn
+# plt.figure(figsize=(10, 6))  # Set the figure size for better visibility
+# sns.lineplot(
+#     data=long_data, x="epoch", y="value", hue="metric", palette="tab10"
 # )
 
-plt.xlabel("Epoch", fontsize=14)
+# # Step 5: Customize the plot
+# plt.title(
+#     "Perbandingan akurasi pelatihan dan validasi dari per-epoch",
+#     fontsize=16,
+# )
+# # plt.title(
+# #     "Per-epoch training time comparison",
+# #     fontsize=16,
+# # )
 
-plt.ylabel("Akurasi (%)", fontsize=14)
-# plt.ylabel("Training time (second)", fontsize=14)
+# plt.xlabel("Epoch", fontsize=14)
 
-plt.legend(title="Jenis akurasi", loc="best")  # Place legend inside the plot
-# plt.legend(title="Training time type", loc="best")  # Place legend inside the plot
+# plt.ylabel("Akurasi (%)", fontsize=14)
+# # plt.ylabel("Training time (second)", fontsize=14)
 
-plt.grid(True)  # Add gridlines for better readability
-plt.tight_layout()  # Adjust layout to prevent overlap
+# plt.legend(title="Jenis akurasi", loc="best")  # Place legend inside the plot
+# # plt.legend(title="Training time type", loc="best")  # Place legend inside the plot
 
-# Set x-ticks to only show integer values
-max_epoch = int(filtered_data["epoch"].max())
-plt.xticks(
-    np.arange(1, max_epoch + 1, 1)
-)  # Only integer values from 0 to max epoch
+# plt.grid(True)  # Add gridlines for better readability
+# plt.tight_layout()  # Adjust layout to prevent overlap
 
-plt.tight_layout()  # Adjust layout to prevent overlap
+# # Set x-ticks to only show integer values
+# max_epoch = int(filtered_data["epoch"].max())
+# plt.xticks(
+#     np.arange(1, max_epoch + 1, 1)
+# )  # Only integer values from 0 to max epoch
 
-# Show the plot
-plt.show()
+# plt.tight_layout()  # Adjust layout to prevent overlap
+
+# # Show the plot
+# plt.show()
 
 # =============================================================================
 # Model summary
 # =============================================================================
-# from torchsummary import summary
-# from models import CNNModel, VGGModel
+from torchsummary import summary
+from models import CNNModel, VGGModel
 
-# summary(
-#     model=CNNModel(),
-#     input_size=(
-#         3,
-#         112,
-#         112,
-#     ),
-# )
+summary(
+    model=CNNModel(),
+    input_size=(
+        3,
+        112,
+        112,
+    ),
+)
 
-# summary(
-#     model=VGGModel(),
-#     input_size=(
-#         3,
-#         112,
-#         112,
-#     ),
-# )
+summary(
+    model=VGGModel(),
+    input_size=(
+        3,
+        112,
+        112,
+    ),
+)
 # =============================================================================
