@@ -1,6 +1,6 @@
 import torch.nn as nn
 import torch.nn.functional as F
-
+from torchvision import models
 
 class CNNModel(nn.Module):
     def __init__(self, dropout_rate=0.8):
@@ -104,3 +104,22 @@ class CNNModel(nn.Module):
         x = self.forward_conv(x)
         x = self.forward_fc(x)
         return x
+
+class VGGModel(nn.Module):
+    def __init__(self, dropout_rate=0.8):
+        super(VGGModel, self).__init__()
+        # self.vgg16 = models.vgg16(weights=models.VGG16_Weights.IMAGENET1K_V1)
+        self.vgg16 = models.vgg16()
+
+        self.vgg16.classifier = nn.Sequential(
+            nn.Linear(512 * 7 * 7, 4096),
+            nn.ReLU(True),
+            nn.Dropout(dropout_rate),
+            nn.Linear(4096, 4096),
+            nn.ReLU(True),
+            nn.Dropout(dropout_rate),
+            nn.Linear(4096, 3),
+        )
+
+    def forward(self, x):
+        return self.vgg16(x)

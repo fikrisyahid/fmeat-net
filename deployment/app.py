@@ -8,15 +8,15 @@ import numpy as np
 import time  # Add time import
 
 # Import your model definition
-from model import CNNModel
+from model import CNNModel, VGGModel
 
 app = Flask(__name__)
 
 # Model settings
 MODEL_PATH = os.path.join(
     os.path.dirname(os.path.dirname(__file__)),
-    "logs-augmented",
-    "cnn_lr0.0001_dr0.8_bs64_mp2_model.pth",
+    "logs-augmented-new",
+    "vgg_lr0.0001_dr0.8_bs16_mp2_model.pth",
 )
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 CLASS_NAMES = ["Pork", "Mix", "Beef"]
