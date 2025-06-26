@@ -128,6 +128,14 @@
             </div>
           </div>
         </div>
+
+        <!-- Inference Time -->
+        <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+          <div class="flex justify-between items-center">
+            <span class="font-medium text-gray-700">Inference Time</span>
+            <span id="inference-time" class="text-lg font-bold text-green-600">-</span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -149,6 +157,7 @@
         const beefBar = document.getElementById("beef-bar");
         const porkBar = document.getElementById("pork-bar");
         const mixBar = document.getElementById("mix-bar");
+        const inferenceTime = document.getElementById("inference-time");
 
         let selectedFile = null;
 
@@ -209,6 +218,9 @@
 
                   // Show prediction result
                   predictionText.textContent = `Predicted: ${data.predicted_class}`;
+
+                  // Update inference time
+                  inferenceTime.textContent = `${data.inference_time_ms} ms`;
 
                   // Show result container
                   resultContainer.classList.remove("hidden");

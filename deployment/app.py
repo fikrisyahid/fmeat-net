@@ -5,6 +5,7 @@ import torchvision.transforms as transforms
 from PIL import Image
 import io
 import numpy as np
+import time  # Add time import
 
 # Import your model definition
 from model import CNNModel
@@ -86,12 +87,16 @@ def classify_image():
         # Move tensor to device
         image_tensor = image_tensor.to(DEVICE)
 
-        # Get predictions
+        # Get predictions with timing
+        start_time = time.time()
         with torch.no_grad():
             outputs = model(image_tensor)
             print(f"outputs: {outputs}")
             probabilities = torch.nn.functional.softmax(outputs, dim=1)[0]
             print(f"probabilities: {probabilities}")
+        end_time = time.time()
+
+        inference_time = (end_time - start_time) * 1000  # Convert to milliseconds
 
         # Convert to Python list
         probs = probabilities.cpu().numpy().tolist()
@@ -115,6 +120,7 @@ def classify_image():
                     "mix": mix_prob,
                 },
                 "predicted_class": predicted_class,
+                "inference_time_ms": round(inference_time, 2),
             }
         )
 
