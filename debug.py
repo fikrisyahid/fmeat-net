@@ -429,25 +429,43 @@
 # =============================================================================
 # Model summary
 # =============================================================================
-from torchsummary import summary
-from models import CNNModel, VGGModel
-import torch
+# from torchsummary import summary
+# from models import CNNModel, VGGModel
+# import torch
 
-summary(
-    model=CNNModel().to(torch.device("cuda" if torch.cuda.is_available() else "cpu")),
-    input_size=(
-        3,
-        112,
-        112,
-    ),
-)
+# summary(
+#     model=CNNModel().to(torch.device("cuda" if torch.cuda.is_available() else "cpu")),
+#     input_size=(
+#         3,
+#         112,
+#         112,
+#     ),
+# )
 
-summary(
-    model=VGGModel().to(torch.device("cuda" if torch.cuda.is_available() else "cpu")),
-    input_size=(
-        3,
-        224,
-        224,
-    ),
-)
+# summary(
+#     model=VGGModel().to(torch.device("cuda" if torch.cuda.is_available() else "cpu")),
+#     input_size=(
+#         3,
+#         224,
+#         224,
+#     ),
+# )
+# =============================================================================
+# Plotting training time comparison fix
+# =============================================================================
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+df_source = pd.read_excel("./logs_best_model_per_epoch.xlsx", sheet_name="fix")
+
+ax = sns.barplot(df_source, x="konfigurasi", y="waktu", hue="jenis_waktu")
+ax.bar_label(ax.containers[0], fontsize=10)
+ax.bar_label(ax.containers[1], fontsize=10)
+plt.title("Perbandingan Waktu Pelatihan per Konfigurasi")
+plt.xlabel("Konfigurasi hyperpameter")
+plt.ylabel("Waktu pelatihan (detik)")
+plt.tight_layout()  # Adjust layout to prevent overlap
+plt.legend(title="Jenis Waktu", loc="upper right")
+plt.show()
 # =============================================================================
